@@ -1,12 +1,13 @@
 package com.dbfp.footprint.domain;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import com.dbfp.footprint.domain.plan.Plan;
+import com.dbfp.footprint.domain.review.Image;
+import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.util.List;
 
 @Getter
 @Entity
@@ -17,13 +18,21 @@ public class Member {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String nickName;
+    @Column(nullable = false, unique = true)
+    private String nickname;
 
+    @Column(nullable = false, unique = true)
     private String email;
+
+    @Column(nullable = false)
+    private String password;
 
     private String kakaoId;
 
-    private String password;
+    @OneToOne
+    @JoinColumn(name = "image_id", nullable = false)
+    private Image image;
 
-    //이미지 넣어야 함
+    @OneToMany(mappedBy = "member")
+    private List<Plan> plans;
 }
