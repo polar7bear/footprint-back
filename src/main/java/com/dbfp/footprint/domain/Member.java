@@ -1,38 +1,28 @@
 package com.dbfp.footprint.domain;
 
-import com.dbfp.footprint.domain.plan.Plan;
-import com.dbfp.footprint.domain.review.Image;
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import java.util.List;
 
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Member {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, unique = true)
-    private String nickname;
+    private String nickName;
 
-    @Column(nullable = false, unique = true)
     private String email;
-
-    @Column(nullable = false)
-    private String password;
 
     private String kakaoId;
 
-    @OneToOne
-    @JoinColumn(name = "image_id", nullable = false)
-    private Image image;
+    private String password;
 
-    @OneToMany(mappedBy = "member")
-    private List<Plan> plans;
+    //이미지 넣어야 함
 }
