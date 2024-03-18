@@ -1,3 +1,6 @@
+import org.springframework.boot.gradle.tasks.bundling.BootJar
+import org.springframework.core.env.PropertySource.named
+
 plugins {
     java
     id("org.springframework.boot") version "3.2.3"
@@ -58,4 +61,14 @@ dependencies {
 
 tasks.withType<Test> {
     useJUnitPlatform()
+}
+
+tasks{
+    named<Jar>("jar"){
+        enabled = false
+    }
+
+    named<BootJar>("bootJar"){
+        archiveFileName = "app.jar"
+    }
 }
