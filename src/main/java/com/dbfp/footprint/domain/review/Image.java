@@ -12,18 +12,20 @@ import lombok.NoArgsConstructor;
 public class Image {
 
     @Id
+    @Column(name = "image_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @Column(name = "image_url", nullable = false)
     private String imageUrl;
 
     @Column(name = "convert_image_name", nullable = false)
     private String convertImageName;
 
 
+    //나중에 review 완성되면 nullable false로 만들어야함
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(nullable = false, name = "review_id")
+    @JoinColumn(nullable = true, name = "review_id")
     private Review review;
 
     @Builder
