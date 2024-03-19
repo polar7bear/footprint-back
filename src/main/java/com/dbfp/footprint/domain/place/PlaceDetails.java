@@ -1,13 +1,16 @@
 package com.dbfp.footprint.domain.place;
 
+import com.dbfp.footprint.dto.PlaceDetailsDto;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-import java.sql.Time;
+import java.time.LocalTime;
 
 @Entity
 @Getter
+@Setter
 @NoArgsConstructor
 @Table(name = "place_details")
 public class PlaceDetails {
@@ -26,5 +29,16 @@ public class PlaceDetails {
     private int cost;
 
     @Column(nullable = false)
-    private Time visitTime;
+    private LocalTime visitTime;
+
+    public static PlaceDetails of(PlaceDetailsDto dto, Place place) {
+        PlaceDetails details = new PlaceDetails();
+        place.getPlaceDetails().add(details);
+        details.setPlace(place);
+        details.setMemo(dto.getMemo());
+        details.setCost(dto.getCost());
+        details.setVisitTime(dto.getVisitTime());
+
+        return details;
+    }
 }
