@@ -1,7 +1,7 @@
-package com.dbfp.footprint.controller.review;
+package com.dbfp.footprint.api.controller;
 
 import com.dbfp.footprint.dto.review.response.ImageResDto;
-import com.dbfp.footprint.service.review.ImageService;
+import com.dbfp.footprint.api.service.ImageService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

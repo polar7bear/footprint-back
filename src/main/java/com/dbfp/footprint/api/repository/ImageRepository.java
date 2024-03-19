@@ -1,4 +1,4 @@
-package com.dbfp.footprint.repository.review;
+package com.dbfp.footprint.api.repository;
 
 import com.dbfp.footprint.domain.review.Image;
 import org.springframework.data.jpa.repository.JpaRepository;

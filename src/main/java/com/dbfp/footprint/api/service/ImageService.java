@@ -1,4 +1,4 @@
-package com.dbfp.footprint.service.review;
+package com.dbfp.footprint.api.service;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
@@ -7,8 +7,7 @@ import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.dbfp.footprint.domain.review.Image;
 import com.dbfp.footprint.dto.review.response.ImageResDto;
 import com.dbfp.footprint.exception.review.NotFoundImageException;
-import com.dbfp.footprint.repository.review.ImageRepository;
-import lombok.NoArgsConstructor;
+import com.dbfp.footprint.api.repository.ImageRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
