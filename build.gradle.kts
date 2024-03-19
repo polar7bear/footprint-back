@@ -56,6 +56,8 @@ dependencies {
     implementation("org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE")
 
 
+//    implementation("org.springframework.boot:spring-boot-starter-validation")
+//    implementation("org.hibernate.hibernate-validator:4.3.0.Final")
 //    testImplementation("org.springframework.boot:spring-boot-starter-test")
 //    testImplementation("org.springframework.security:spring-security-test")
 }
