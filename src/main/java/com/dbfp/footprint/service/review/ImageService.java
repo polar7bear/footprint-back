@@ -8,6 +8,7 @@ import com.dbfp.footprint.domain.review.Image;
 import com.dbfp.footprint.dto.review.response.ImageResDto;
 import com.dbfp.footprint.exception.review.NotFoundImageException;
 import com.dbfp.footprint.repository.review.ImageRepository;
+import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,7 +17,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.UUID;
-
 @Service
 public class ImageService {
     private final AmazonS3 amazonS3;
