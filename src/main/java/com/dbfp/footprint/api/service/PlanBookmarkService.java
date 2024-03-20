@@ -32,6 +32,11 @@ public class PlanBookmarkService {
         Member member = findMemberById(memberId);
         Plan plan = findPlanById(planId);
 
+        if (!plan.isVisible()) {
+            log.info("Plan is not visible - Plan ID: {}", planId);
+            throw new IllegalStateException("공유가 허용되지 않은 일정입니다.");
+        }
+
         Optional<PlanBookmark> existingBookmark = planBookmarkRepository.findByMemberIdAndPlanId(memberId, planId);
         if (existingBookmark.isPresent()) {
             log.info("Bookmark already exists - Member ID: {}, Plan ID: {}", memberId, planId);
