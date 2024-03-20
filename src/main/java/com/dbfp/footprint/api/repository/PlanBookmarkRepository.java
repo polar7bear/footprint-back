@@ -11,6 +11,6 @@ import java.util.Optional;
 public interface PlanBookmarkRepository extends JpaRepository<PlanBookmark, Long> {
     List<PlanBookmark> findAllByMemberId(Long memberId);
     Optional<PlanBookmark> findByMemberIdAndPlanId(Long memberId, Long planId);
-    void deleteByMemberIdAndPlanId(Long memberId, Long planId);
+    //void deleteByMemberIdAndPlanId(Long memberId, Long planId);
 
 }

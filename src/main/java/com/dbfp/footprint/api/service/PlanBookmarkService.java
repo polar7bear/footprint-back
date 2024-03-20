@@ -29,20 +29,12 @@ public class PlanBookmarkService {
     @Transactional
     public PlanBookmarkDto addBookmark(Long memberId, Long planId) {
         log.info("Attempting to add a bookmark - Member ID: {}, Plan ID: {}", memberId, planId);
-        Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> {
-                    log.error("Member not found - ID: {}", memberId);
-                    return new IllegalArgumentException("존재하지 않는 회원입니다.");
-                });
-        Plan plan = planRepository.findById(planId)
-                .orElseThrow(() -> {
-                    log.error("Plan not found - ID: {}", planId);
-                    return new IllegalArgumentException("존재하지 않는 일정입니다.");
-                });
+        Member member = findMemberById(memberId);
+        Plan plan = findPlanById(planId);
 
         Optional<PlanBookmark> existingBookmark = planBookmarkRepository.findByMemberIdAndPlanId(memberId, planId);
         if (existingBookmark.isPresent()) {
-            log.warn("Bookmark already exists - Member ID: {}, Plan ID: {}", memberId, planId);
+            log.info("Bookmark already exists - Member ID: {}, Plan ID: {}", memberId, planId);
             throw new IllegalStateException("즐겨찾기가 이미 존재합니다..");
         }
 
@@ -54,21 +46,38 @@ public class PlanBookmarkService {
     @Transactional
     public void removeBookmark(Long memberId, Long planId) {
         log.info("Attempting to remove a bookmark - Member ID: {}, Plan ID: {}", memberId, planId);
-        if (!planBookmarkRepository.findByMemberIdAndPlanId(memberId, planId).isPresent()) {
-            log.error("Bookmark not found - Member ID: {}, Plan ID: {}", memberId, planId);
-            throw new IllegalArgumentException("존재하지 않는 즐겨찾기 입니다.");
-        }
-        planBookmarkRepository.deleteByMemberIdAndPlanId(memberId, planId);
+        PlanBookmark bookmark = planBookmarkRepository.findByMemberIdAndPlanId(memberId, planId)
+                .orElseThrow(() -> {
+                    log.error("Bookmark not found - Member ID: {}, Plan ID: {}", memberId, planId);
+                    return new IllegalArgumentException("존재하지 않는 즐겨찾기입니다.");
+                });
+        planBookmarkRepository.delete(bookmark);
         log.info("Bookmark successfully removed - Member ID: {}, Plan ID: {}", memberId, planId);
     }
 
     public List<CreatePlanBookmarkResponse> findBookmarksByMemberId(Long memberId) {
         log.info("Fetching bookmarks for member - ID: {}", memberId);
-        List<PlanBookmark> bookmarks = planBookmarkRepository.findAllByMemberId(memberId);
-        List<CreatePlanBookmarkResponse> responses = bookmarks.stream()
+        return planBookmarkRepository.findAllByMemberId(memberId).stream()
                 .map(CreatePlanBookmarkResponse::from)
                 .collect(Collectors.toList());
-        log.info("Found {} bookmarks for member - ID: {}", responses.size(), memberId);
-        return responses;
     }
+
+    private Member findMemberById(Long memberId) {
+        log.info("Looking for member with ID: {}", memberId);
+        return memberRepository.findById(memberId)
+                .orElseThrow(() -> {
+                    log.error("Member not found - ID: {}", memberId);
+                    return new IllegalArgumentException("멤버를 찾을 수 없음 - ID: " + memberId);
+                });
+    }
+
+    private Plan findPlanById(Long planId) {
+        log.info("Looking for plan with ID: {}", planId);
+        return planRepository.findById(planId)
+                .orElseThrow(() -> {
+                    log.error("Plan not found - ID: {}", planId);
+                    return new IllegalArgumentException("일정을 찾을 수 없음 - ID: " + planId);
+                });
+    }
+
 }
