@@ -34,13 +34,13 @@ public class PlanBookmarkService {
 
         if (!plan.isVisible()) {
             log.info("Plan is not visible - Plan ID: {}", planId);
-            throw new IllegalStateException("공유가 허용되지 않은 일정입니다.");
+            throw new RuntimeException("공유가 허용되지 않은 일정입니다.");
         }
 
         Optional<PlanBookmark> existingBookmark = planBookmarkRepository.findByMemberIdAndPlanId(memberId, planId);
         if (existingBookmark.isPresent()) {
             log.info("Bookmark already exists - Member ID: {}, Plan ID: {}", memberId, planId);
-            throw new IllegalStateException("즐겨찾기가 이미 존재합니다..");
+            throw new RuntimeException("즐겨찾기가 이미 존재합니다..");
         }
 
         PlanBookmark savedBookmark =  planBookmarkRepository.save(PlanBookmark.of(member, plan));
@@ -54,7 +54,7 @@ public class PlanBookmarkService {
         PlanBookmark bookmark = planBookmarkRepository.findByMemberIdAndPlanId(memberId, planId)
                 .orElseThrow(() -> {
                     log.error("Bookmark not found - Member ID: {}, Plan ID: {}", memberId, planId);
-                    return new IllegalArgumentException("존재하지 않는 즐겨찾기입니다.");
+                    return new RuntimeException("존재하지 않는 즐겨찾기입니다.");
                 });
         planBookmarkRepository.delete(bookmark);
         log.info("Bookmark successfully removed - Member ID: {}, Plan ID: {}", memberId, planId);
@@ -72,7 +72,7 @@ public class PlanBookmarkService {
         return memberRepository.findById(memberId)
                 .orElseThrow(() -> {
                     log.error("Member not found - ID: {}", memberId);
-                    return new IllegalArgumentException("멤버를 찾을 수 없음 - ID: " + memberId);
+                    return new RuntimeException("멤버를 찾을 수 없음 - ID: " + memberId);
                 });
     }
 
@@ -81,7 +81,7 @@ public class PlanBookmarkService {
         return planRepository.findById(planId)
                 .orElseThrow(() -> {
                     log.error("Plan not found - ID: {}", planId);
-                    return new IllegalArgumentException("일정을 찾을 수 없음 - ID: " + planId);
+                    return new RuntimeException("일정을 찾을 수 없음 - ID: " + planId);
                 });
     }
 
