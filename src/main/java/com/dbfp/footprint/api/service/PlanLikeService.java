@@ -50,7 +50,7 @@ public class PlanLikeService {
         return memberRepository.findById(memberId)
                 .orElseThrow(() -> {
                     log.error("Member not found - ID: {}", memberId);
-                    return new IllegalArgumentException("멤버를 찾을 수 없음 - ID: " + memberId);
+                    return new RuntimeException("멤버를 찾을 수 없음 - ID: " + memberId);
                 });
     }
 
@@ -59,7 +59,7 @@ public class PlanLikeService {
         return planRepository.findById(planId)
                 .orElseThrow(() -> {
                     log.error("Plan not found - ID: {}", planId);
-                    return new IllegalArgumentException("일정을 찾을 수 없음 - ID: " + planId);
+                    return new RuntimeException("일정을 찾을 수 없음 - ID: " + planId);
                 });
     }
 }
