@@ -28,7 +28,7 @@ public class PlaceDetails {
 
     private int cost;
 
-    @Column(nullable = false)
+    @Column(name = "visit_time", nullable = false)
     private LocalTime visitTime;
 
     public static PlaceDetails of(PlaceDetailsDto dto, Place place) {

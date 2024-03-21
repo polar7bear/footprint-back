@@ -13,6 +13,7 @@ import lombok.NoArgsConstructor;
 public class PlanLike {
 
     @Id
+    @Column(name = "plan_like_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 

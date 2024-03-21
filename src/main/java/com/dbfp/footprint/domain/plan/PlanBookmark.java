@@ -13,6 +13,7 @@ import lombok.NoArgsConstructor;
 public class PlanBookmark {
 
     @Id
+    @Column(name = "plan_bookmark_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
