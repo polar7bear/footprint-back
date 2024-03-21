@@ -1,4 +1,4 @@
-package com.dbfp.footprint.api.repository;
+package com.dbfp.footprint.api.repository.schedule;
 
 import com.dbfp.footprint.domain.plan.Plan;
 import com.dbfp.footprint.domain.plan.Schedule;

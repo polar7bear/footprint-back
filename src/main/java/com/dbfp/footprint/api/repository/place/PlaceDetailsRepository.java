@@ -1,4 +1,4 @@
-package com.dbfp.footprint.api.repository;
+package com.dbfp.footprint.api.repository.place;
 
 import com.dbfp.footprint.domain.place.Place;
 import com.dbfp.footprint.domain.place.PlaceDetails;

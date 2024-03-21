@@ -1,7 +1,7 @@
-package com.dbfp.footprint.controller.review;
+package com.dbfp.footprint.api.controller.review;
 
-import com.dbfp.footprint.dto.review.response.ImageResDto;
-import com.dbfp.footprint.service.review.ImageService;
+import com.dbfp.footprint.dto.review.ImageDto;
+import com.dbfp.footprint.api.service.review.ImageService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,8 +17,8 @@ public class ImageController {
     }
 
     @PostMapping(value = "/images", consumes = "multipart/form-data")
-    public ResponseEntity<ImageResDto> imageUpload(@RequestPart("image") MultipartFile image) {
-        ImageResDto upload = imageService.upload(image);
+    public ResponseEntity<ImageDto> imageUpload(@RequestPart("image") MultipartFile image) {
+        ImageDto upload = imageService.upload(image);
 
         return new ResponseEntity<>(upload, HttpStatus.OK);
     }

@@ -1,6 +1,6 @@
-package com.dbfp.footprint.api.service;
+package com.dbfp.footprint.api.service.member;
 
-import com.dbfp.footprint.api.repository.MemberRepository;
+import com.dbfp.footprint.api.repository.member.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

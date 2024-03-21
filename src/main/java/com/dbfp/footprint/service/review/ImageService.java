@@ -5,10 +5,9 @@ import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.dbfp.footprint.domain.review.Image;
-import com.dbfp.footprint.dto.review.response.ImageResDto;
+import com.dbfp.footprint.dto.review.ImageDto;
 import com.dbfp.footprint.exception.review.NotFoundImageException;
 import com.dbfp.footprint.repository.review.ImageRepository;
-import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,7 +33,7 @@ public class ImageService {
     }
 
     @Transactional
-    public ImageResDto upload(MultipartFile multipartFile) {
+    public ImageDto upload(MultipartFile multipartFile) {
         validateImage(multipartFile.getContentType());
 
         containingImageDelete(multipartFile);
@@ -46,7 +45,7 @@ public class ImageService {
             Image image = createImageEntity(fileName);
             imageRepository.save(image);
 
-            return ImageResDto.of(image);
+            return ImageDto.of(image);
         } catch (IOException e) {
             throw new NotFoundImageException(fileName);
         }
