@@ -12,7 +12,11 @@ import com.dbfp.footprint.dto.PlaceDto;
 import com.dbfp.footprint.dto.PlanDto;
 import com.dbfp.footprint.dto.ScheduleDto;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -141,7 +145,16 @@ public class PlanService {
         planRepository.delete(plan);
     }
 
+    public PlanDto getPlanDetails(Long planId, Long memberId) {
+        Plan plan = planRepository.findByIdAndVisible(planId, memberId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "일정을 찾을 수 없습니다."));
+        return PlanDto.from(plan);
+    }
 
+    public Page<PlanDto> getPublicPlans(Pageable pageable) {
+        return planRepository.findByVisibleTrue(pageable)
+                .map(PlanDto::from);
+    }
 
 
 }
