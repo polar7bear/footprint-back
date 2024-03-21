@@ -55,6 +55,7 @@ public class ReviewService {
         return ReviewDto.of(review);
     }
 
+    @Transactional
     public Page<ReviewListDto> findAllMyReviewPage(Long memberId, int page, int size) {
         Member member = memberRepository.findById(memberId).orElseThrow(NotFoundMemberException::new);
 
