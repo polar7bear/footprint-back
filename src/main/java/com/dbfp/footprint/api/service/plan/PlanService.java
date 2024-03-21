@@ -1,7 +1,10 @@
-package com.dbfp.footprint.api.service;
+package com.dbfp.footprint.api.service.plan;
 
-import com.dbfp.footprint.api.repository.*;
-import com.dbfp.footprint.api.request.CreatePlanRequest;
+import com.dbfp.footprint.api.repository.member.MemberRepository;
+import com.dbfp.footprint.api.repository.place.PlaceDetailsRepository;
+import com.dbfp.footprint.api.repository.place.PlaceRepository;
+import com.dbfp.footprint.api.repository.plan.PlanRepository;
+import com.dbfp.footprint.api.repository.schedule.ScheduleRepository;
 import com.dbfp.footprint.domain.Member;
 import com.dbfp.footprint.domain.place.Place;
 import com.dbfp.footprint.domain.place.PlaceDetails;

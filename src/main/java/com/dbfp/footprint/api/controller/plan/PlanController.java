@@ -1,13 +1,8 @@
-package com.dbfp.footprint.api.controller;
+package com.dbfp.footprint.api.controller.plan;
 
-import com.dbfp.footprint.api.repository.MemberRepository;
 import com.dbfp.footprint.api.request.CreatePlanRequest;
 import com.dbfp.footprint.api.response.CreatePlanResponse;
-import com.dbfp.footprint.api.service.MemberService;
-import com.dbfp.footprint.api.service.PlanService;
-import com.dbfp.footprint.domain.Member;
-import com.dbfp.footprint.domain.plan.Plan;
-import com.dbfp.footprint.dto.MemberDto;
+import com.dbfp.footprint.api.service.plan.PlanService;
 import com.dbfp.footprint.dto.PlanDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
