@@ -5,6 +5,10 @@ import com.dbfp.footprint.api.response.CreatePlanResponse;
 import com.dbfp.footprint.api.service.plan.PlanService;
 import com.dbfp.footprint.dto.PlanDto;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -39,5 +43,18 @@ public class PlanController {
     public ResponseEntity<?> deletePlan(@PathVariable Long planId) {
         planService.deletePlan(planId);
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/{planId}")
+    public ResponseEntity<PlanDto> getPlanDetails(@PathVariable Long planId, @RequestParam(required = false) Long memberId) {
+        PlanDto planDto = planService.getPlanDetails(planId, memberId);
+        return ResponseEntity.ok(planDto);
+    }
+
+    @GetMapping()
+    public ResponseEntity<Page<PlanDto>> getPublicPlans(
+            @PageableDefault(size = 8, sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
+        Page<PlanDto> planDtos = planService.getPublicPlans(pageable);
+        return ResponseEntity.ok(planDtos);
     }
 }
