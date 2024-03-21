@@ -149,8 +149,18 @@ public class PlanService {
     }
 
     public PlanDto getPlanDetails(Long planId, Long memberId) {
-        Plan plan = planRepository.findByIdAndVisible(planId, memberId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "일정을 찾을 수 없습니다."));
+        //여행 계획 존재하는지 확인
+        Plan plan = planRepository.findById(planId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "존재하지 않는 여행 계획입니다"));
+
+        //소유자 확인
+        boolean isOwner = plan.getMember().getId().equals(memberId);
+
+        //공개되지 않았고 소유자가 아닌 경우 접근 거부
+        if (!plan.isVisible() && !isOwner) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "접근이 거부되었습니다.");
+        }
+
         return PlanDto.from(plan);
     }
 
