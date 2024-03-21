@@ -5,9 +5,11 @@ import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Getter
+@Setter
 @Table(name = "plan_like")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class PlanLike {
@@ -24,4 +26,11 @@ public class PlanLike {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(nullable = false, name = "plan_id")
     private Plan plan;
+
+    public static PlanLike of (Member member, Plan plan) {
+        PlanLike planLike = new PlanLike();
+        planLike.member = member;
+        planLike.plan = plan;
+        return planLike;
+    }
 }
