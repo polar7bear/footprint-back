@@ -1,6 +1,6 @@
-package com.dbfp.footprint.api.controller;
+package com.dbfp.footprint.api.controller.plan;
 
-import com.dbfp.footprint.api.service.PlanLikeService;
+import com.dbfp.footprint.api.service.plan.PlanLikeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

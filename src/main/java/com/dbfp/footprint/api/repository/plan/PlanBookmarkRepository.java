@@ -1,4 +1,4 @@
-package com.dbfp.footprint.api.repository;
+package com.dbfp.footprint.api.repository.plan;
 
 import com.dbfp.footprint.domain.plan.PlanBookmark;
 import org.springframework.data.jpa.repository.JpaRepository;

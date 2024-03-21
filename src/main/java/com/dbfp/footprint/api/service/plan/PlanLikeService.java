@@ -1,8 +1,8 @@
-package com.dbfp.footprint.api.service;
+package com.dbfp.footprint.api.service.plan;
 
-import com.dbfp.footprint.api.repository.MemberRepository;
-import com.dbfp.footprint.api.repository.PlanLikeRepository;
-import com.dbfp.footprint.api.repository.PlanRepository;
+import com.dbfp.footprint.api.repository.member.MemberRepository;
+import com.dbfp.footprint.api.repository.plan.PlanLikeRepository;
+import com.dbfp.footprint.api.repository.plan.PlanRepository;
 import com.dbfp.footprint.domain.Member;
 import com.dbfp.footprint.domain.plan.Plan;
 import com.dbfp.footprint.domain.plan.PlanLike;
