@@ -28,9 +28,9 @@ public class PlanBookmarkController {
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping
-    public ResponseEntity<List<CreatePlanBookmarkResponse>> getBookmarksByMember(@RequestParam Long memberId) {
-        List<CreatePlanBookmarkResponse> bookmarks = planBookmarkService.findBookmarksByMemberId(memberId);
-        return ResponseEntity.ok(bookmarks);
-    }
+//    @GetMapping
+//    public ResponseEntity<List<CreatePlanBookmarkResponse>> getBookmarksByMember(@RequestParam Long memberId) {
+//        List<CreatePlanBookmarkResponse> bookmarks = planBookmarkService.findBookmarksByMemberId(memberId);
+//        return ResponseEntity.ok(bookmarks);
+//    }
 }

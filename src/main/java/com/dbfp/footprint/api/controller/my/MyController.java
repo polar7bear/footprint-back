@@ -1,5 +1,7 @@
 package com.dbfp.footprint.api.controller.my;
 
+import com.dbfp.footprint.api.response.CreatePlanBookmarkResponse;
+import com.dbfp.footprint.api.service.plan.PlanBookmarkService;
 import com.dbfp.footprint.api.service.plan.PlanService;
 import com.dbfp.footprint.dto.PlanDto;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +19,7 @@ import java.util.List;
 public class MyController {
 
     private final PlanService planService;
+    private final PlanBookmarkService planBookmarkService;
 
     @GetMapping("/plans")
     public ResponseEntity<List<PlanDto>> getUserPlans(@RequestParam Long memberId) {
@@ -24,6 +27,11 @@ public class MyController {
         return ResponseEntity.ok(userPlans);
     }
 
+    @GetMapping("/bookmarks")
+    public ResponseEntity<List<CreatePlanBookmarkResponse>> getBookmarksByMember(@RequestParam Long memberId) {
+        List<CreatePlanBookmarkResponse> bookmarks = planBookmarkService.findBookmarksByMemberId(memberId);
+        return ResponseEntity.ok(bookmarks);
+    }
 
 
 
