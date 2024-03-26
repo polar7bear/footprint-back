@@ -12,30 +12,35 @@ import java.util.List;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ReviewDto {
-    private Long reviewId;
+    //private Long reviewId;
 
     private Long memberId;
 
     private String title;
 
     private String content;
+
+    private List<Long> images;
     //좋아요개수 추가해야함
 
     @Builder
-    private ReviewDto(Long reviewId, Long memberId,
-                      String title, String content) {
-        this.reviewId = reviewId;
+    private ReviewDto(Long memberId,
+                      String title, String content,
+                      List<Long> images) {
+        //this.reviewId = reviewId;
         this.memberId = memberId;
         this.title = title;
         this.content = content;
+        this.images = images;
     }
 
-    public static ReviewDto of(Review review) {
+    public static ReviewDto of(Review review, List<Long> images) {
         return ReviewDto.builder()
-                .reviewId(review.getId())
+                //.reviewId(review.getId())
                 .memberId(review.getMember().getId())
                 .title(review.getTitle())
                 .content(review.getContent())
+                .images(images)
                 .build();
     }
 }
