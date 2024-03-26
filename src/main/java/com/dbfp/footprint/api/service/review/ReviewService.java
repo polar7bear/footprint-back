@@ -51,8 +51,13 @@ public class ReviewService {
     //리뷰 상세 조회
     public ReviewDto findById(Long reviewId){
         Review review = reviewRepository.findById(reviewId).orElseThrow(NotFoundReviewException::new);
+        List<Long> images = new ArrayList<>();
+        for (Image image : review.getImages()) {
+            Long imageId = image.getId();
+            images.add(imageId);
+        }
 
-        return ReviewDto.of(review);
+        return ReviewDto.of(review, images);
     }
 
     @Transactional
