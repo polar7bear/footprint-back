@@ -53,7 +53,7 @@ public class PlanController {
 
     @GetMapping()
     public ResponseEntity<Page<PlanDto>> getPublicPlans(
-            @PageableDefault(size = 8, sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
+            @PageableDefault(size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
         Page<PlanDto> planDtos = planService.getPublicPlans(pageable);
         return ResponseEntity.ok(planDtos);
     }

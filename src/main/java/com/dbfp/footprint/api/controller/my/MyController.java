@@ -1,17 +1,19 @@
 package com.dbfp.footprint.api.controller.my;
 
-import com.dbfp.footprint.api.response.CreatePlanBookmarkResponse;
+import com.dbfp.footprint.api.response.PlanBookmarkResponse;
 import com.dbfp.footprint.api.service.plan.PlanBookmarkService;
 import com.dbfp.footprint.api.service.plan.PlanService;
 import com.dbfp.footprint.dto.PlanDto;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-
-import java.util.List;
 
 @Controller
 @RequestMapping("/api/my")
@@ -22,17 +24,14 @@ public class MyController {
     private final PlanBookmarkService planBookmarkService;
 
     @GetMapping("/plans")
-    public ResponseEntity<List<PlanDto>> getUserPlans(@RequestParam Long memberId) {
-        List<PlanDto> userPlans = planService.findPlansByUserId(memberId);
+    public ResponseEntity<Page<PlanDto>>getUserPlans(@RequestParam Long memberId,@PageableDefault(size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
+        Page<PlanDto> userPlans = planService.findPlansByUserId(memberId, pageable);
         return ResponseEntity.ok(userPlans);
     }
 
     @GetMapping("/bookmarks")
-    public ResponseEntity<List<CreatePlanBookmarkResponse>> getBookmarksByMember(@RequestParam Long memberId) {
-        List<CreatePlanBookmarkResponse> bookmarks = planBookmarkService.findBookmarksByMemberId(memberId);
+    public ResponseEntity<Page<PlanBookmarkResponse>>  getBookmarksByMember(@RequestParam Long memberId, @PageableDefault(size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
+        Page<PlanBookmarkResponse> bookmarks = planBookmarkService.findBookmarksByMemberId(memberId, pageable);
         return ResponseEntity.ok(bookmarks);
     }
-
-
-
 }

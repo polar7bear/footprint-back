@@ -172,9 +172,7 @@ public class PlanService {
                 .map(PlanDto::from);
     }
 
-    public List<PlanDto> findPlansByUserId(Long memberId) {
-        List<Plan> plans = planRepository.findByMemberId(memberId);
-        return plans.stream().map(PlanDto::from).collect(Collectors.toList());
+    public Page<PlanDto> findPlansByUserId(Long memberId, Pageable pageable) {
+        return planRepository.findByMemberId(memberId, pageable).map(PlanDto::from);
     }
-
 }
