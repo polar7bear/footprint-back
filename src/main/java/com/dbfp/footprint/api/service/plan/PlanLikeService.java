@@ -6,6 +6,8 @@ import com.dbfp.footprint.api.repository.plan.PlanRepository;
 import com.dbfp.footprint.domain.Member;
 import com.dbfp.footprint.domain.plan.Plan;
 import com.dbfp.footprint.domain.plan.PlanLike;
+import com.dbfp.footprint.exception.member.NotFoundMemberException;
+import com.dbfp.footprint.exception.plan.PlanNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -48,18 +50,12 @@ public class PlanLikeService {
     private Member findMemberById(Long memberId) {
         log.info("Looking for member with ID: {}", memberId);
         return memberRepository.findById(memberId)
-                .orElseThrow(() -> {
-                    log.error("Member not found - ID: {}", memberId);
-                    return new RuntimeException("멤버를 찾을 수 없음 - ID: " + memberId);
-                });
+                .orElseThrow(() -> new NotFoundMemberException("멤버를 찾을 수 없음 - ID: " + memberId));
     }
 
     private Plan findPlanById(Long planId) {
         log.info("Looking for plan with ID: {}", planId);
         return planRepository.findById(planId)
-                .orElseThrow(() -> {
-                    log.error("Plan not found - ID: {}", planId);
-                    return new RuntimeException("일정을 찾을 수 없음 - ID: " + planId);
-                });
+                .orElseThrow(() -> new PlanNotFoundException("일정을 찾을 수 없음 - ID: " + planId));
     }
 }

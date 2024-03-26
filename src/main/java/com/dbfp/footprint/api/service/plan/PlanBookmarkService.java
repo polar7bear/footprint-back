@@ -8,6 +8,11 @@ import com.dbfp.footprint.domain.Member;
 import com.dbfp.footprint.domain.plan.Plan;
 import com.dbfp.footprint.domain.plan.PlanBookmark;
 import com.dbfp.footprint.dto.PlanBookmarkDto;
+import com.dbfp.footprint.exception.member.NotFoundMemberException;
+import com.dbfp.footprint.exception.plan.BookmarkAlreadyExistsException;
+import com.dbfp.footprint.exception.plan.BookmarkNotFoundException;
+import com.dbfp.footprint.exception.plan.PlanNotFoundException;
+import com.dbfp.footprint.exception.plan.PlanNotVisibleException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -34,13 +39,13 @@ public class PlanBookmarkService {
 
         if (!plan.isVisible()) {
             log.info("Plan is not visible - Plan ID: {}", planId);
-            throw new RuntimeException("공유가 허용되지 않은 일정입니다.");
+            throw new PlanNotVisibleException("공유가 허용되지 않은 일정입니다.");
         }
 
         Optional<PlanBookmark> existingBookmark = planBookmarkRepository.findByMemberIdAndPlanId(memberId, planId);
         if (existingBookmark.isPresent()) {
             log.info("Bookmark already exists - Member ID: {}, Plan ID: {}", memberId, planId);
-            throw new RuntimeException("즐겨찾기가 이미 존재합니다..");
+            throw new BookmarkAlreadyExistsException("즐겨찾기가 이미 존재합니다.");
         }
 
         PlanBookmark savedBookmark =  planBookmarkRepository.save(PlanBookmark.of(member, plan));
@@ -51,11 +56,10 @@ public class PlanBookmarkService {
     @Transactional
     public void removeBookmark(Long memberId, Long planId) {
         log.info("Attempting to remove a bookmark - Member ID: {}, Plan ID: {}", memberId, planId);
+
         PlanBookmark bookmark = planBookmarkRepository.findByMemberIdAndPlanId(memberId, planId)
-                .orElseThrow(() -> {
-                    log.error("Bookmark not found - Member ID: {}, Plan ID: {}", memberId, planId);
-                    return new RuntimeException("존재하지 않는 즐겨찾기입니다.");
-                });
+                .orElseThrow(() -> new BookmarkNotFoundException("존재하지 않는 즐겨찾기입니다."));
+
         planBookmarkRepository.delete(bookmark);
         log.info("Bookmark successfully removed - Member ID: {}, Plan ID: {}", memberId, planId);
     }
@@ -70,19 +74,13 @@ public class PlanBookmarkService {
     private Member findMemberById(Long memberId) {
         log.info("Looking for member with ID: {}", memberId);
         return memberRepository.findById(memberId)
-                .orElseThrow(() -> {
-                    log.error("Member not found - ID: {}", memberId);
-                    return new RuntimeException("멤버를 찾을 수 없음 - ID: " + memberId);
-                });
+                .orElseThrow(() -> new NotFoundMemberException("멤버를 찾을 수 없음 - ID: " + memberId));
     }
 
     private Plan findPlanById(Long planId) {
         log.info("Looking for plan with ID: {}", planId);
         return planRepository.findById(planId)
-                .orElseThrow(() -> {
-                    log.error("Plan not found - ID: {}", planId);
-                    return new RuntimeException("일정을 찾을 수 없음 - ID: " + planId);
-                });
+                .orElseThrow(() -> new PlanNotFoundException("일정을 찾을 수 없음 - ID: " + planId));
     }
 
 }
