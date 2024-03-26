@@ -18,4 +18,6 @@ public interface PlanRepository extends JpaRepository<Plan, Long> {
 
     List<Plan> findByMemberId(Long memberId);
 
+    Page<Plan> findByMemberId(Long memberId, Pageable pageable);
+
 }
