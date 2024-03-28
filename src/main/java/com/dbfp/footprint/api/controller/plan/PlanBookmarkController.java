@@ -22,12 +22,7 @@ public class PlanBookmarkController {
     @DeleteMapping("/{planId}")
     public ResponseEntity<Void> removeBookmark(@PathVariable Long planId, @RequestParam Long memberId) {
         planBookmarkService.removeBookmark(memberId, planId);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.noContent().build();
     }
 
-//    @GetMapping
-//    public ResponseEntity<List<CreatePlanBookmarkResponse>> getBookmarksByMember(@RequestParam Long memberId) {
-//        List<CreatePlanBookmarkResponse> bookmarks = planBookmarkService.findBookmarksByMemberId(memberId);
-//        return ResponseEntity.ok(bookmarks);
-//    }
 }
