@@ -15,6 +15,9 @@ public interface PlanBookmarkRepository extends JpaRepository<PlanBookmark, Long
 
     Page<PlanBookmark> findAllByMemberId(Long memberId, Pageable pageable);
     Optional<PlanBookmark> findByMemberIdAndPlanId(Long memberId, Long planId);
+
+    int countByPlanId(Long planid);
     //void deleteByMemberIdAndPlanId(Long memberId, Long planId);
+
 
 }

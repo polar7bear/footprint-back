@@ -3,6 +3,8 @@ package com.dbfp.footprint.api.service.plan;
 import com.dbfp.footprint.api.repository.member.MemberRepository;
 import com.dbfp.footprint.api.repository.place.PlaceDetailsRepository;
 import com.dbfp.footprint.api.repository.place.PlaceRepository;
+import com.dbfp.footprint.api.repository.plan.PlanBookmarkRepository;
+import com.dbfp.footprint.api.repository.plan.PlanLikeRepository;
 import com.dbfp.footprint.api.repository.plan.PlanRepository;
 import com.dbfp.footprint.api.repository.schedule.ScheduleRepository;
 import com.dbfp.footprint.api.response.PlanResponse;
@@ -19,7 +21,9 @@ import com.dbfp.footprint.exception.plan.PlanNotFoundException;
 import com.dbfp.footprint.exception.plan.PlanNotVisibleException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,6 +38,8 @@ public class PlanService {
     private final PlaceRepository placeRepository;
     private final PlaceDetailsRepository placeDetailsRepository;
     private final MemberRepository memberRepository;
+    private final PlanLikeRepository planLikeRepository;
+    private final PlanBookmarkRepository planBookmarkRepository;
 
     public PlanDto createPlan(PlanDto planDto, Long memberId) {
 
@@ -167,14 +173,17 @@ public class PlanService {
         return PlanResponse.from(plan);
     }
 
+
     @Transactional(readOnly = true)
     public Page<PlanResponse> getPublicPlans(Pageable pageable) {
         return planRepository.findByVisibleTrue(pageable)
                 .map(PlanResponse::from);
-    }
+  }
 
-    @Transactional
+
+    @Transactional(readOnly = true)
     public Page<PlanResponse> findPlansByUserId(Long memberId, Pageable pageable) {
         return planRepository.findByMemberId(memberId, pageable).map(PlanResponse::from);
     }
+
 }

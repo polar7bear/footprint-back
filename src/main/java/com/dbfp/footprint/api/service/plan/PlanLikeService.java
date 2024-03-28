@@ -32,9 +32,11 @@ public class PlanLikeService {
 
         Optional<PlanLike> like = planLikeRepository.findByMemberIdAndPlanId(memberId, planId);
         if (like.isPresent()) {
+            plan.removeLike();
             planLikeRepository.delete(like.get());
             return false;//좋아요 취소
         } else {
+            plan.addLike();
             planLikeRepository.save(PlanLike.of(member, plan));
             return true;//좋아요 추가
         }

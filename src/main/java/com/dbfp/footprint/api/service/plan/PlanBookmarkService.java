@@ -48,6 +48,7 @@ public class PlanBookmarkService {
             throw new BookmarkAlreadyExistsException("즐겨찾기가 이미 존재합니다.");
         }
 
+        plan.addBookmark();
         PlanBookmark savedBookmark =  planBookmarkRepository.save(PlanBookmark.of(member, plan));
         log.info("Bookmark successfully added - Bookmark ID: {}", savedBookmark.getId());
         return PlanBookmarkDto.from(savedBookmark);
@@ -59,6 +60,9 @@ public class PlanBookmarkService {
 
         PlanBookmark bookmark = planBookmarkRepository.findByMemberIdAndPlanId(memberId, planId)
                 .orElseThrow(() -> new BookmarkNotFoundException("존재하지 않는 즐겨찾기입니다."));
+
+        Plan plan = bookmark.getPlan();
+        plan.removeBookmark();
 
         planBookmarkRepository.delete(bookmark);
         log.info("Bookmark successfully removed - Member ID: {}, Plan ID: {}", memberId, planId);
