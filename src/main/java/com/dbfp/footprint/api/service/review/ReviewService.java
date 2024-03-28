@@ -70,6 +70,26 @@ public class ReviewService {
         return reviewsListPage.map(this::reviewListMap);
     }
 
+    //좋아요 추가해야함
+    @Transactional
+    public Page<ReviewListDto> findAllReviewsBySort(String sort, int page, int size) {
+        Page<Review> reviewsListPage;
+        if (sort.equals("id")){
+            reviewsListPage = reviewRepository.findAll(
+                    PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, "Id")));
+        }else if (sort.equals("likes")){
+            //좋아요 추가해야함
+            reviewsListPage = reviewRepository.findAll(
+                    PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, "Id")));
+        }else{
+            reviewsListPage = reviewRepository.findAll(
+                    PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, "Id")));
+        }
+
+
+        return reviewsListPage.map(this::reviewListMap);
+    }
+
     private ReviewListDto reviewListMap(Review review) {
         if (review.getImages().isEmpty()) {
             return new ReviewListDto(
