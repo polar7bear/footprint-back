@@ -1,6 +1,7 @@
 package com.dbfp.footprint.api.controller.my;
 
 import com.dbfp.footprint.api.response.PlanBookmarkResponse;
+import com.dbfp.footprint.api.response.PlanResponse;
 import com.dbfp.footprint.api.service.plan.PlanBookmarkService;
 import com.dbfp.footprint.api.service.plan.PlanService;
 import com.dbfp.footprint.dto.PlanDto;
@@ -24,8 +25,8 @@ public class MyController {
     private final PlanBookmarkService planBookmarkService;
 
     @GetMapping("/plans")
-    public ResponseEntity<Page<PlanDto>>getUserPlans(@RequestParam Long memberId,@PageableDefault(size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
-        Page<PlanDto> userPlans = planService.findPlansByUserId(memberId, pageable);
+    public ResponseEntity<Page<PlanResponse>>getUserPlans(@RequestParam Long memberId,@PageableDefault(size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
+        Page<PlanResponse> userPlans = planService.findPlansByUserId(memberId, pageable);
         return ResponseEntity.ok(userPlans);
     }
 
