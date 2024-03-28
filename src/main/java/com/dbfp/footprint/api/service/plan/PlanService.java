@@ -19,12 +19,10 @@ import com.dbfp.footprint.exception.plan.PlanNotVisibleException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -151,6 +149,7 @@ public class PlanService {
         planRepository.delete(plan);
     }
 
+    @Transactional
     public PlanDto getPlanDetails(Long planId, Long memberId) {
         //여행 계획 존재하는지 확인
         Plan plan = planRepository.findById(planId)
@@ -167,11 +166,13 @@ public class PlanService {
         return PlanDto.from(plan);
     }
 
+    @Transactional(readOnly = true)
     public Page<PlanDto> getPublicPlans(Pageable pageable) {
         return planRepository.findByVisibleTrue(pageable)
                 .map(PlanDto::from);
     }
 
+    @Transactional
     public Page<PlanDto> findPlansByUserId(Long memberId, Pageable pageable) {
         return planRepository.findByMemberId(memberId, pageable).map(PlanDto::from);
     }

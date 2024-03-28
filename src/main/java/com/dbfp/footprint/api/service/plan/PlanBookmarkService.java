@@ -64,6 +64,7 @@ public class PlanBookmarkService {
         log.info("Bookmark successfully removed - Member ID: {}, Plan ID: {}", memberId, planId);
     }
 
+    @Transactional
     public Page<PlanBookmarkResponse> findBookmarksByMemberId(Long memberId, Pageable pageable) {
         log.info("Fetching bookmarks for member - ID: {}", memberId);
         return planBookmarkRepository.findAllByMemberId(memberId, pageable).map(PlanBookmarkResponse::from);
