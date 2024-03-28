@@ -4,6 +4,7 @@ import com.dbfp.footprint.api.request.review.CreateReviewRequest;
 import com.dbfp.footprint.api.request.review.UpdateReviewRequest;
 import com.dbfp.footprint.api.service.review.ReviewService;
 import com.dbfp.footprint.dto.review.ReviewDto;
+import com.dbfp.footprint.dto.review.ReviewLikeDto;
 import com.dbfp.footprint.dto.review.ReviewListDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -52,6 +53,20 @@ public class ReivewController {
                                                            @RequestParam(value = "size", defaultValue = "8") int size){
         Page<ReviewListDto> reviews = reviewService.findAllReviewsBySort(sort, page, size);
         return new ResponseEntity<>(reviews, HttpStatus.OK);
+    }
+
+    //좋아요 추가
+    @PostMapping("/reviews/add-likes")
+    public ResponseEntity<String> addLikes(@RequestBody ReviewLikeDto reviewLikeDto) {
+        reviewService.addLikes(reviewLikeDto);
+        return new ResponseEntity<>("SUCCESS", HttpStatus.OK);
+    }
+
+    //좋아요 취소
+    @PostMapping("/reviews/sub-likes")
+    public ResponseEntity<String> subLikes(@RequestBody ReviewLikeDto likeCommentDto) {
+        reviewService.subLikes(likeCommentDto);
+        return new ResponseEntity<>("SUCCESS", HttpStatus.OK);
     }
 
     //리뷰 수정

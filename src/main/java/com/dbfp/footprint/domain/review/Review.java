@@ -31,8 +31,13 @@ public class Review {
 
     private String content;
 
+    private Integer likes;
+
     @OneToMany(mappedBy = "review")
     private List<Image> images;
+
+    @OneToMany(mappedBy = "review", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ReviewLike> reviewLikes = new ArrayList<>();
 
     @Builder
     private Review(String title, String content,
@@ -41,6 +46,7 @@ public class Review {
         this.content = content;
         this.member = member;
         this.images = images;
+        this.likes = 0;
     }
 
     public static Review of(CreateReviewRequest reviewReqDto, Member member, List<Image> images) {
@@ -56,5 +62,26 @@ public class Review {
         this.title = reviewReqDto.getTitle();
         this.content = reviewReqDto.getContent();
         this.images = images;
+    }
+
+    public void addLikes(Member member) {
+        ReviewLike reviewLike = new ReviewLike(member, this);
+        reviewLikes.add(reviewLike);
+        likes += 1;
+    }
+
+    public void subLikes(Member member) {
+        ReviewLike reviewLike = findReviewLike(member);
+        reviewLikes.remove(reviewLike);
+        if (likes > 0) {
+            likes -= 1;
+        }
+    }
+
+    private ReviewLike findReviewLike(Member member) {
+        return reviewLikes.stream()
+                .filter(reviewLike -> reviewLike.getMember().equals(member))
+                .findFirst()
+                .orElse(null);
     }
 }

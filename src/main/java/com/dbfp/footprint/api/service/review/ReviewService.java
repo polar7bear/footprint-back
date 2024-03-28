@@ -2,6 +2,7 @@ package com.dbfp.footprint.api.service.review;
 
 import com.dbfp.footprint.api.repository.review.ImageRepository;
 import com.dbfp.footprint.api.repository.member.MemberRepository;
+import com.dbfp.footprint.api.repository.review.ReviewLikeRepository;
 import com.dbfp.footprint.api.repository.review.ReviewRepository;
 import com.dbfp.footprint.api.request.review.CreateReviewRequest;
 import com.dbfp.footprint.api.request.review.UpdateReviewRequest;
@@ -9,6 +10,7 @@ import com.dbfp.footprint.domain.Member;
 import com.dbfp.footprint.domain.review.Image;
 import com.dbfp.footprint.domain.review.Review;
 import com.dbfp.footprint.dto.review.ReviewDto;
+import com.dbfp.footprint.dto.review.ReviewLikeDto;
 import com.dbfp.footprint.dto.review.ReviewListDto;
 import com.dbfp.footprint.exception.member.NotFoundMemberException;
 import com.dbfp.footprint.exception.review.NotFoundImageException;
@@ -27,11 +29,14 @@ public class ReviewService {
     private final MemberRepository memberRepository;
     private final ImageRepository imageRepository;
     private final ReviewRepository reviewRepository;
+    private final ReviewLikeRepository reviewLikeRepository;
 
-    public ReviewService(MemberRepository memberRepository, ImageRepository imageRepository, ReviewRepository reviewRepository){
+    public ReviewService(MemberRepository memberRepository, ImageRepository imageRepository,
+                         ReviewRepository reviewRepository, ReviewLikeRepository reviewLikeRepository){
         this.memberRepository = memberRepository;
         this.imageRepository = imageRepository;
         this.reviewRepository = reviewRepository;
+        this.reviewLikeRepository = reviewLikeRepository;
     }
 
     //리뷰 작성
@@ -70,7 +75,7 @@ public class ReviewService {
         return reviewsListPage.map(this::reviewListMap);
     }
 
-    //좋아요 추가해야함
+    //좋아요순 추가해야함
     @Transactional
     public Page<ReviewListDto> findAllReviewsBySort(String sort, int page, int size) {
         Page<Review> reviewsListPage;
@@ -106,6 +111,35 @@ public class ReviewService {
                     review.getImages().get(0).getImageUrl()
             );
         }
+    }
+
+    //리뷰 좋아요 추가
+    @Transactional
+    public void addLikes(ReviewLikeDto reviewLikeDto) {
+        Member member = memberRepository.findById(reviewLikeDto.getMemberId())
+                .orElseThrow(NotFoundMemberException::new);
+        Review review = reviewRepository.findById(reviewLikeDto.getReviewId()).orElseThrow(NotFoundReviewException::new);
+
+        if (reviewLikeRepository.existsByMemberAndReview(member, review)) {
+            throw new IllegalArgumentException();
+        }
+
+        review.addLikes(member);
+        reviewRepository.save(review);
+    }
+
+    //리뷰 좋아요 취소
+    public void subLikes(ReviewLikeDto reviewLikeDto) {
+        Member member = memberRepository.findById(reviewLikeDto.getMemberId())
+                .orElseThrow(NotFoundMemberException::new);
+        Review review = reviewRepository.findById(reviewLikeDto.getReviewId()).orElseThrow(NotFoundReviewException::new);
+
+        if (!reviewLikeRepository.existsByMemberAndReview(member, review)) {
+            throw new IllegalArgumentException();
+        }
+
+        review.subLikes(member);
+        reviewRepository.save(review);
     }
 
     // 리뷰 수정
