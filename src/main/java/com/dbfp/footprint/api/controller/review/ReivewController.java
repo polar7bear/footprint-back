@@ -45,6 +45,15 @@ public class ReivewController {
         return new ResponseEntity<>(myReviews, HttpStatus.OK);
     }
 
+    //리뷰 전체 조회와 정렬
+    @GetMapping("/reviews")
+    public ResponseEntity<Page<ReviewListDto>> findReviews(@RequestParam(value = "sort", defaultValue = "id") String sort,
+                                                           @RequestParam(value = "page", defaultValue = "0") int page,
+                                                           @RequestParam(value = "size", defaultValue = "8") int size){
+        Page<ReviewListDto> reviews = reviewService.findAllReviewsBySort(sort, page, size);
+        return new ResponseEntity<>(reviews, HttpStatus.OK);
+    }
+
     //리뷰 수정
     @PutMapping("/reviews")
     public ResponseEntity<String> updateReview(@RequestBody UpdateReviewRequest reviewReqDto){
