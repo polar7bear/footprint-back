@@ -5,6 +5,7 @@ import com.dbfp.footprint.api.repository.place.PlaceDetailsRepository;
 import com.dbfp.footprint.api.repository.place.PlaceRepository;
 import com.dbfp.footprint.api.repository.plan.PlanRepository;
 import com.dbfp.footprint.api.repository.schedule.ScheduleRepository;
+import com.dbfp.footprint.api.response.PlanResponse;
 import com.dbfp.footprint.domain.Member;
 import com.dbfp.footprint.domain.place.Place;
 import com.dbfp.footprint.domain.place.PlaceDetails;
@@ -150,7 +151,7 @@ public class PlanService {
     }
 
     @Transactional
-    public PlanDto getPlanDetails(Long planId, Long memberId) {
+    public PlanResponse getPlanDetails(Long planId, Long memberId) {
         //여행 계획 존재하는지 확인
         Plan plan = planRepository.findById(planId)
                 .orElseThrow(() -> new PlanNotFoundException("존재하지 않는 여행 계획입니다"));
@@ -163,17 +164,17 @@ public class PlanService {
             throw new PlanNotVisibleException("접근이 거부되었습니다.");
         }
 
-        return PlanDto.from(plan);
+        return PlanResponse.from(plan);
     }
 
     @Transactional(readOnly = true)
-    public Page<PlanDto> getPublicPlans(Pageable pageable) {
+    public Page<PlanResponse> getPublicPlans(Pageable pageable) {
         return planRepository.findByVisibleTrue(pageable)
-                .map(PlanDto::from);
+                .map(PlanResponse::from);
     }
 
     @Transactional
-    public Page<PlanDto> findPlansByUserId(Long memberId, Pageable pageable) {
-        return planRepository.findByMemberId(memberId, pageable).map(PlanDto::from);
+    public Page<PlanResponse> findPlansByUserId(Long memberId, Pageable pageable) {
+        return planRepository.findByMemberId(memberId, pageable).map(PlanResponse::from);
     }
 }

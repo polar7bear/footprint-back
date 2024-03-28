@@ -2,6 +2,7 @@ package com.dbfp.footprint.api.controller.plan;
 
 import com.dbfp.footprint.api.request.CreatePlanRequest;
 import com.dbfp.footprint.api.response.CreatePlanResponse;
+import com.dbfp.footprint.api.response.PlanResponse;
 import com.dbfp.footprint.api.service.plan.PlanService;
 import com.dbfp.footprint.dto.PlanDto;
 import lombok.RequiredArgsConstructor;
@@ -46,15 +47,15 @@ public class PlanController {
     }
 
     @GetMapping("/{planId}")
-    public ResponseEntity<PlanDto> getPlanDetails(@PathVariable Long planId, @RequestParam(required = false) Long memberId) {
-        PlanDto planDto = planService.getPlanDetails(planId, memberId);
+    public ResponseEntity<PlanResponse> getPlanDetails(@PathVariable Long planId, @RequestParam(required = false) Long memberId) {
+        PlanResponse planDto = planService.getPlanDetails(planId, memberId);
         return ResponseEntity.ok(planDto);
     }
 
     @GetMapping()
-    public ResponseEntity<Page<PlanDto>> getPublicPlans(
+    public ResponseEntity<Page<PlanResponse>> getPublicPlans(
             @PageableDefault(size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
-        Page<PlanDto> planDtos = planService.getPublicPlans(pageable);
+        Page<PlanResponse> planDtos = planService.getPublicPlans(pageable);
         return ResponseEntity.ok(planDtos);
     }
 }
