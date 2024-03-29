@@ -25,7 +25,7 @@ public class Schedule {
     @JoinColumn(name = "plan_id", nullable = false)
     private Plan plan;
 
-    @Column(nullable = false)
+    @Column(name = "`day`",nullable = false)
     private int day;
 
     @OneToMany(mappedBy = "schedule", cascade = CascadeType.ALL, orphanRemoval = true)
