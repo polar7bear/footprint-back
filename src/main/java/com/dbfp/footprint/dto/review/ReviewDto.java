@@ -22,16 +22,18 @@ public class ReviewDto {
 
     private List<Long> images;
     //좋아요개수 추가해야함
+    private Integer likes;
 
     @Builder
     private ReviewDto(Long memberId,
                       String title, String content,
-                      List<Long> images) {
+                      List<Long> images, Integer likes) {
         //this.reviewId = reviewId;
         this.memberId = memberId;
         this.title = title;
         this.content = content;
         this.images = images;
+        this.likes = likes;
     }
 
     public static ReviewDto of(Review review, List<Long> images) {
@@ -41,6 +43,7 @@ public class ReviewDto {
                 .title(review.getTitle())
                 .content(review.getContent())
                 .images(images)
+                .likes(review.getLikes())
                 .build();
     }
 }

@@ -37,7 +37,7 @@ public class ReivewController {
         return new ResponseEntity<>(reviewDto, HttpStatus.OK);
     }
 
-    //내가 쓴 리뷰 조회
+    //내가 쓴 리뷰목록 조회
     @GetMapping("/my/reviews")
     public ResponseEntity<Page<ReviewListDto>> findMyReviews(@RequestParam(value = "memberId") Long memberId,
                                                              @RequestParam(value = "page", defaultValue = "0") int page,
