@@ -28,6 +28,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -156,21 +158,42 @@ public class PlanService {
         planRepository.delete(plan);
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public PlanResponse getPlanDetails(Long planId, Long memberId) {
         //여행 계획 존재하는지 확인
-        Plan plan = planRepository.findById(planId)
-                .orElseThrow(() -> new PlanNotFoundException("존재하지 않는 여행 계획입니다"));
-
+        Plan plan = getPlanIfExists(planId);
         //소유자 확인
-        boolean isOwner = plan.getMember().getId().equals(memberId);
-
         //공개되지 않았고 소유자가 아닌 경우 접근 거부
-        if (!plan.isVisible() && !isOwner) {
-            throw new PlanNotVisibleException("접근이 거부되었습니다.");
-        }
+        checkPlanVisibility(plan, memberId);
 
         return PlanResponse.from(plan);
+    }
+
+    @Transactional(readOnly = true)
+    public List<ScheduleDto> getSchedulesByPlanId(Long planId, Long memberId){
+        //여행 계획 존재하는지 확인
+        Plan plan = getPlanIfExists(planId);
+        //소유자 확인
+        //공개되지 않았고 소유자가 아닌 경우 접근 거부
+        checkPlanVisibility(plan, memberId);
+        List<Schedule> schedules = scheduleRepository.findByPlanId(planId);
+        return schedules.stream()
+                .map(ScheduleDto::from)
+                .collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    public Optional<ScheduleDto> getSchedulesByPlanIdAndDay(Long planId, int day, Long memberId) {
+        Plan plan = getPlanIfExists(planId);
+        //소유자 확인
+        //공개되지 않았고 소유자가 아닌 경우 접근 거부
+        checkPlanVisibility(plan, memberId);
+
+        // Retrieve schedule by planId and day
+        Optional<ScheduleDto> scheduleDto = scheduleRepository.findByPlanIdAndDay(planId, day)
+                .map(ScheduleDto::from);
+
+        return scheduleDto;
     }
 
 
@@ -186,4 +209,16 @@ public class PlanService {
         return planRepository.findByMemberId(memberId, pageable).map(PlanResponse::from);
     }
 
+
+    private Plan getPlanIfExists(Long planId) {
+        return planRepository.findById(planId)
+                .orElseThrow(() -> new PlanNotFoundException("존재하지 않는 여행 계획입니다"));
+    }
+
+    private void checkPlanVisibility(Plan plan, Long memberId) {
+        boolean isOwner = plan.getMember().getId().equals(memberId);
+        if (!plan.isVisible() && !isOwner) {
+            throw new PlanNotVisibleException("접근이 거부되었습니다.");
+        }
+    }
 }
