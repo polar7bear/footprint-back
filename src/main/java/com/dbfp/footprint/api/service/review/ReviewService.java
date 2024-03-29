@@ -54,6 +54,7 @@ public class ReviewService {
     }
 
     //리뷰 상세 조회
+    @Transactional
     public ReviewDto findById(Long reviewId){
         Review review = reviewRepository.findById(reviewId).orElseThrow(NotFoundReviewException::new);
         List<Long> images = new ArrayList<>();
@@ -129,6 +130,7 @@ public class ReviewService {
     }
 
     //리뷰 좋아요 취소
+    @Transactional
     public void subLikes(ReviewLikeDto reviewLikeDto) {
         Member member = memberRepository.findById(reviewLikeDto.getMemberId())
                 .orElseThrow(NotFoundMemberException::new);
