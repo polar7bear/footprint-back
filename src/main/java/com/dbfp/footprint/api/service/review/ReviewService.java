@@ -76,7 +76,7 @@ public class ReviewService {
         return reviewsListPage.map(this::reviewListMap);
     }
 
-    //좋아요순 추가해야함
+    //정렬 및 전체조회
     @Transactional
     public Page<ReviewListDto> findAllReviewsBySort(String sort, int page, int size) {
         Page<Review> reviewsListPage;
@@ -84,9 +84,8 @@ public class ReviewService {
             reviewsListPage = reviewRepository.findAll(
                     PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, "Id")));
         }else if (sort.equals("likes")){
-            //좋아요 추가해야함
             reviewsListPage = reviewRepository.findAll(
-                    PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, "Id")));
+                    PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "likes")));
         }else{
             reviewsListPage = reviewRepository.findAll(
                     PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, "Id")));
