@@ -20,15 +20,6 @@ public class PlanLikeController {
 
     private final PlanLikeService planLikeService;
 
-//    @ApiResponse(responseCode = "200", description = "플랜 좋아요 ", content = @Content(mediaType = "application/json", examples = {
-//            @ExampleObject(name = "성공적인 응답", value = "{\"liked\": true}")
-//    }))
-//    @PostMapping("/{planId}")
-//    public ResponseEntity<?> toggleLike(@PathVariable Long planId, @RequestParam Long memberId) {
-//        boolean isLiked = planLikeService.toggleLike(memberId, planId);
-//        return ResponseEntity.ok(Map.of("liked", isLiked));
-//    }
-
 
     @ApiResponse(responseCode = "200", description = "좋아요 토글 성공",
             content = {@io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
