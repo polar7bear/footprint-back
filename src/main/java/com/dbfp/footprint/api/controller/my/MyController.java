@@ -39,7 +39,7 @@ public class MyController {
     @GetMapping("/bookmarks")
     public ResponseEntity<Page<PlanBookmarkResponse>>  getBookmarksByMember(@RequestParam Long memberId, @Parameter(description = "페이지 번호 (0부터 시작)", example = "0") @RequestParam(defaultValue = "0") int page,
                                                                             @Parameter(description = "페이지 당 항목 수", example = "10") @RequestParam(defaultValue = "10") int size,
-                                                                            @Parameter(description = "정렬 기준 (예: sort=bookmarkCount,asc)") @RequestParam(defaultValue = "id,desc") String sort) {
+                                                                            @Parameter(description = "정렬 기준 (예: sort=id,asc)") @RequestParam(defaultValue = "id,desc") String sort) {
         Pageable pageable = preparePageable(page, size, sort);
         Page<PlanBookmarkResponse> bookmarks = planBookmarkService.findBookmarksByMemberId(memberId, pageable);
         return ResponseEntity.ok(bookmarks);
@@ -48,9 +48,8 @@ public class MyController {
     private Pageable preparePageable(int page, int size, String sort) {
         String[] sortArr = sort.split(",");
         String sortBy = sortArr[0];
-        Sort.Direction sortOrder = Sort.Direction.DESC; // Setting "desc" as default
+        Sort.Direction sortOrder = Sort.Direction.DESC;
 
-        // Check if sortOrder should be ASC based on the second element of sortArr
         if (sortArr.length > 1 && sortArr[1].equalsIgnoreCase("asc")) {
             sortOrder = Sort.Direction.ASC;
         }

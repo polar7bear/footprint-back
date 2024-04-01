@@ -70,9 +70,8 @@ public class PlanController {
     private Pageable preparePageable(int page, int size, String sort) {
         String[] sortArr = sort.split(",");
         String sortBy = sortArr[0];
-        Sort.Direction sortOrder = Sort.Direction.DESC; // Setting "desc" as default
+        Sort.Direction sortOrder = Sort.Direction.DESC;
 
-        // Check if sortOrder should be ASC based on the second element of sortArr
         if (sortArr.length > 1 && sortArr[1].equalsIgnoreCase("asc")) {
             sortOrder = Sort.Direction.ASC;
         }

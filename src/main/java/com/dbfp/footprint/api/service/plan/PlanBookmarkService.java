@@ -33,30 +33,30 @@ public class PlanBookmarkService {
 
     @Transactional
     public PlanBookmarkDto addBookmark(Long memberId, Long planId) {
-        log.info("Attempting to add a bookmark - Member ID: {}, Plan ID: {}", memberId, planId);
+        log.info("Member ID: {}, Plan ID: {}", memberId, planId);
         Member member = findMemberById(memberId);
         Plan plan = findPlanById(planId);
 
         if (!plan.isVisible()) {
-            log.info("Plan is not visible - Plan ID: {}", planId);
+            log.info("Plan ID: {}", planId);
             throw new PlanNotVisibleException("공유가 허용되지 않은 일정입니다.");
         }
 
         Optional<PlanBookmark> existingBookmark = planBookmarkRepository.findByMemberIdAndPlanId(memberId, planId);
         if (existingBookmark.isPresent()) {
-            log.info("Bookmark already exists - Member ID: {}, Plan ID: {}", memberId, planId);
+            log.info("Member ID: {}, Plan ID: {}", memberId, planId);
             throw new BookmarkAlreadyExistsException("즐겨찾기가 이미 존재합니다.");
         }
 
         plan.addBookmark();
         PlanBookmark savedBookmark =  planBookmarkRepository.save(PlanBookmark.of(member, plan));
-        log.info("Bookmark successfully added - Bookmark ID: {}", savedBookmark.getId());
+        log.info("Bookmark ID: {}", savedBookmark.getId());
         return PlanBookmarkDto.from(savedBookmark);
     }
 
     @Transactional
     public void removeBookmark(Long memberId, Long planId) {
-        log.info("Attempting to remove a bookmark - Member ID: {}, Plan ID: {}", memberId, planId);
+        log.info("Member ID: {}, Plan ID: {}", memberId, planId);
 
         PlanBookmark bookmark = planBookmarkRepository.findByMemberIdAndPlanId(memberId, planId)
                 .orElseThrow(() -> new BookmarkNotFoundException("존재하지 않는 즐겨찾기입니다."));
@@ -65,12 +65,12 @@ public class PlanBookmarkService {
         plan.removeBookmark();
 
         planBookmarkRepository.delete(bookmark);
-        log.info("Bookmark successfully removed - Member ID: {}, Plan ID: {}", memberId, planId);
+        log.info("Member ID: {}, Plan ID: {}", memberId, planId);
     }
 
     @Transactional
     public Page<PlanBookmarkResponse> findBookmarksByMemberId(Long memberId, Pageable pageable) {
-        log.info("Fetching bookmarks for member - ID: {}", memberId);
+        log.info("member - ID: {}", memberId);
         return planBookmarkRepository.findAllByMemberId(memberId, pageable).map(PlanBookmarkResponse::from);
     }
 
