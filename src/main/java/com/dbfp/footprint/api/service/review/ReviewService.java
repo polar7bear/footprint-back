@@ -57,10 +57,10 @@ public class ReviewService {
     @Transactional
     public ReviewDto findById(Long reviewId){
         Review review = reviewRepository.findById(reviewId).orElseThrow(NotFoundReviewException::new);
-        List<Long> images = new ArrayList<>();
+        List<String> images = new ArrayList<>();
         for (Image image : review.getImages()) {
-            Long imageId = image.getId();
-            images.add(imageId);
+            String imageUrl = image.getImageUrl();
+            images.add(imageUrl);
         }
 
         return ReviewDto.of(review, images);
