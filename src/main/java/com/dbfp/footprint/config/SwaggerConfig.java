@@ -13,8 +13,9 @@ public class SwaggerConfig {
         return new OpenAPI()
                 .info(
                         new io.swagger.v3.oas.models.info.Info()
-                                .title("IDE API DOCS")
-                                .description("")
+                                .title("DFBF Footprint API")
+                                .description("DogFoot-BirdFoot: GoormthonTraining 3rd Full-Stack Final Project")
+                                .version("1.0.0")
                 )
 //                .components(
 //                        new Components()
