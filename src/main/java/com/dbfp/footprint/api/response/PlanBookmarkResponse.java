@@ -10,7 +10,7 @@ import java.time.LocalDate;
 
 @Getter
 @Setter
-public class CreatePlanBookmarkResponse {
+public class PlanBookmarkResponse {
     private Long id;
     private Long memberId;
     private Long planId;
@@ -19,9 +19,9 @@ public class CreatePlanBookmarkResponse {
     private LocalDate endDate;
     private String region;
 
-    public static CreatePlanBookmarkResponse from(PlanBookmark bookmark) {
+    public static PlanBookmarkResponse from(PlanBookmark bookmark) {
         Plan plan = bookmark.getPlan();
-        CreatePlanBookmarkResponse response = new CreatePlanBookmarkResponse();
+        PlanBookmarkResponse response = new PlanBookmarkResponse();
         response.setId(bookmark.getId());
         response.setMemberId(bookmark.getMember().getId());
         response.setPlanId(plan.getId());

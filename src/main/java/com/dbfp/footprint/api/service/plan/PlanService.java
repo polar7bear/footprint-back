@@ -3,8 +3,11 @@ package com.dbfp.footprint.api.service.plan;
 import com.dbfp.footprint.api.repository.member.MemberRepository;
 import com.dbfp.footprint.api.repository.place.PlaceDetailsRepository;
 import com.dbfp.footprint.api.repository.place.PlaceRepository;
+import com.dbfp.footprint.api.repository.plan.PlanBookmarkRepository;
+import com.dbfp.footprint.api.repository.plan.PlanLikeRepository;
 import com.dbfp.footprint.api.repository.plan.PlanRepository;
 import com.dbfp.footprint.api.repository.schedule.ScheduleRepository;
+import com.dbfp.footprint.api.response.PlanResponse;
 import com.dbfp.footprint.domain.Member;
 import com.dbfp.footprint.domain.place.Place;
 import com.dbfp.footprint.domain.place.PlaceDetails;
@@ -14,10 +17,19 @@ import com.dbfp.footprint.dto.PlaceDetailsDto;
 import com.dbfp.footprint.dto.PlaceDto;
 import com.dbfp.footprint.dto.PlanDto;
 import com.dbfp.footprint.dto.ScheduleDto;
+import com.dbfp.footprint.exception.plan.PlanNotFoundException;
+import com.dbfp.footprint.exception.plan.PlanNotVisibleException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -28,6 +40,8 @@ public class PlanService {
     private final PlaceRepository placeRepository;
     private final PlaceDetailsRepository placeDetailsRepository;
     private final MemberRepository memberRepository;
+    private final PlanLikeRepository planLikeRepository;
+    private final PlanBookmarkRepository planBookmarkRepository;
 
     public PlanDto createPlan(PlanDto planDto, Long memberId) {
 
@@ -144,7 +158,67 @@ public class PlanService {
         planRepository.delete(plan);
     }
 
+    @Transactional(readOnly = true)
+    public PlanResponse getPlanDetails(Long planId, Long memberId) {
+        //여행 계획 존재하는지 확인
+        Plan plan = getPlanIfExists(planId);
+        //소유자 확인
+        //공개되지 않았고 소유자가 아닌 경우 접근 거부
+        checkPlanVisibility(plan, memberId);
+
+        return PlanResponse.from(plan);
+    }
+
+    @Transactional(readOnly = true)
+    public List<ScheduleDto> getSchedulesByPlanId(Long planId, Long memberId){
+        //여행 계획 존재하는지 확인
+        Plan plan = getPlanIfExists(planId);
+        //소유자 확인
+        //공개되지 않았고 소유자가 아닌 경우 접근 거부
+        checkPlanVisibility(plan, memberId);
+        List<Schedule> schedules = scheduleRepository.findByPlanId(planId);
+        return schedules.stream()
+                .map(ScheduleDto::from)
+                .collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    public Optional<ScheduleDto> getSchedulesByPlanIdAndDay(Long planId, int day, Long memberId) {
+        Plan plan = getPlanIfExists(planId);
+        //소유자 확인
+        //공개되지 않았고 소유자가 아닌 경우 접근 거부
+        checkPlanVisibility(plan, memberId);
+
+        // Retrieve schedule by planId and day
+        Optional<ScheduleDto> scheduleDto = scheduleRepository.findByPlanIdAndDay(planId, day)
+                .map(ScheduleDto::from);
+
+        return scheduleDto;
+    }
 
 
+    @Transactional(readOnly = true)
+    public Page<PlanResponse> getPublicPlans(Pageable pageable) {
+        return planRepository.findByVisibleTrue(pageable)
+                .map(PlanResponse::from);
+  }
 
+
+    @Transactional(readOnly = true)
+    public Page<PlanResponse> findPlansByUserId(Long memberId, Pageable pageable) {
+        return planRepository.findByMemberId(memberId, pageable).map(PlanResponse::from);
+    }
+
+
+    private Plan getPlanIfExists(Long planId) {
+        return planRepository.findById(planId)
+                .orElseThrow(() -> new PlanNotFoundException("존재하지 않는 여행 계획입니다"));
+    }
+
+    private void checkPlanVisibility(Plan plan, Long memberId) {
+        boolean isOwner = plan.getMember().getId().equals(memberId);
+        if (!plan.isVisible() && !isOwner) {
+            throw new PlanNotVisibleException("접근이 거부되었습니다.");
+        }
+    }
 }
