@@ -8,6 +8,7 @@ import com.dbfp.footprint.domain.Member;
 import com.dbfp.footprint.domain.plan.Plan;
 import com.dbfp.footprint.domain.plan.PlanBookmark;
 import com.dbfp.footprint.dto.PlanBookmarkDto;
+import com.dbfp.footprint.dto.PlanDto;
 import com.dbfp.footprint.exception.member.NotFoundMemberException;
 import com.dbfp.footprint.exception.plan.BookmarkAlreadyExistsException;
 import com.dbfp.footprint.exception.plan.BookmarkNotFoundException;
@@ -20,7 +21,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -84,6 +87,18 @@ public class PlanBookmarkService {
         log.info("Looking for plan with ID: {}", planId);
         return planRepository.findById(planId)
                 .orElseThrow(() -> new PlanNotFoundException("일정을 찾을 수 없음 - ID: " + planId));
+    }
+
+    @Transactional(readOnly = true)
+    public List<PlanDto> getBookmarkedPlans(Long memberId) {
+        List<PlanBookmark> bookmarks = planBookmarkRepository.findAllByMemberId(memberId);
+
+        return bookmarks.stream()
+                .map(bookmark -> {
+                    Plan plan = bookmark.getPlan();
+                    return PlanDto.from(plan);
+                })
+                .collect(Collectors.toList());
     }
 
 }
