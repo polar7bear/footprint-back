@@ -20,7 +20,7 @@ public class PlaceDetails {
     @Column(name = "place_detail_id")
     private Long id;
 
-    @ManyToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "place_id", nullable = false)
     private Place place;
 
@@ -33,12 +33,21 @@ public class PlaceDetails {
 
     public static PlaceDetails of(PlaceDetailsDto dto, Place place) {
         PlaceDetails details = new PlaceDetails();
-        place.getPlaceDetails().add(details);
+        place.setPlaceDetails(details);
+        details.setPlace(place);
         details.setPlace(place);
         details.setMemo(dto.getMemo());
         details.setCost(dto.getCost());
         details.setVisitTime(dto.getVisitTime());
 
         return details;
+    }
+
+    // 복사 생성자
+    public PlaceDetails(PlaceDetails originalDetails, Place copiedPlace) {
+        this.place = copiedPlace;
+        this.memo = originalDetails.getMemo();
+        this.cost = originalDetails.getCost();
+        this.visitTime = originalDetails.getVisitTime();
     }
 }

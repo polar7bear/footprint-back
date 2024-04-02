@@ -19,6 +19,6 @@ public class CreatePlaceRequest {
 
     private String address;
 
-    private List<CreatePlaceDetailsRequest> placeDetails;
+    private CreatePlaceDetailsRequest placeDetails;
 
 }

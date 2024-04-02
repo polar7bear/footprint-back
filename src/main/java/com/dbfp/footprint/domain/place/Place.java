@@ -39,8 +39,8 @@ public class Place {
 
     private String address;
 
-    @OneToMany(mappedBy = "place", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<PlaceDetails> placeDetails = new ArrayList<>();
+    @OneToOne(mappedBy = "place", cascade = CascadeType.ALL, orphanRemoval = true)
+    private PlaceDetails placeDetails;
 
     public static Place of(PlaceDto dto, Schedule schedule) {
         Place place = new Place();
@@ -53,6 +53,16 @@ public class Place {
         place.setAddress(dto.getAddress());
 
         return place;
+    }
+
+    // 장소 복사 생성자
+    public Place(Place originalPlace, Schedule copiedSchedule) {
+        this.schedule = copiedSchedule;
+        this.kakaoPlaceId = originalPlace.getKakaoPlaceId();
+        this.placeName = originalPlace.getPlaceName();
+        this.latitude = originalPlace.getLatitude();
+        this.longitude = originalPlace.getLongitude();
+        this.address = originalPlace.getAddress();
     }
 
 }
