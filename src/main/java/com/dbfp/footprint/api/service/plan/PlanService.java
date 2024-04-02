@@ -3,6 +3,7 @@ package com.dbfp.footprint.api.service.plan;
 import com.dbfp.footprint.api.repository.member.MemberRepository;
 import com.dbfp.footprint.api.repository.place.PlaceDetailsRepository;
 import com.dbfp.footprint.api.repository.place.PlaceRepository;
+import com.dbfp.footprint.api.repository.plan.CopyPlanRepository;
 import com.dbfp.footprint.api.repository.plan.PlanBookmarkRepository;
 import com.dbfp.footprint.api.repository.plan.PlanLikeRepository;
 import com.dbfp.footprint.api.repository.plan.PlanRepository;
@@ -11,6 +12,7 @@ import com.dbfp.footprint.api.response.PlanResponse;
 import com.dbfp.footprint.domain.Member;
 import com.dbfp.footprint.domain.place.Place;
 import com.dbfp.footprint.domain.place.PlaceDetails;
+import com.dbfp.footprint.domain.plan.CopyPlan;
 import com.dbfp.footprint.domain.plan.Plan;
 import com.dbfp.footprint.domain.plan.Schedule;
 import com.dbfp.footprint.dto.PlaceDetailsDto;
@@ -42,7 +44,9 @@ public class PlanService {
     private final MemberRepository memberRepository;
     private final PlanLikeRepository planLikeRepository;
     private final PlanBookmarkRepository planBookmarkRepository;
+    private final CopyPlanRepository copyPlanRepository;
 
+    @Transactional
     public PlanDto createPlan(PlanDto planDto, Long memberId) {
 
         Member member = memberRepository.findById(memberId)
@@ -61,10 +65,16 @@ public class PlanService {
                 Place place = Place.of(placeDto, schedule);
                 place = placeRepository.save(place);
 
-                for (PlaceDetailsDto placeDetailsDto : placeDto.getPlaceDetails()) {
+                /*for (PlaceDetailsDto placeDetailsDto : placeDto.getPlaceDetails()) {
                     PlaceDetails details = PlaceDetails.of(placeDetailsDto, place);
                     placeDetailsRepository.save(details);
 
+                    totalCost += placeDetailsDto.getCost();
+                }*/
+                PlaceDetailsDto placeDetailsDto = placeDto.getPlaceDetails();
+                if (placeDetailsDto != null) {
+                    PlaceDetails details = PlaceDetails.of(placeDetailsDto, place);
+                    placeDetailsRepository.save(details);
                     totalCost += placeDetailsDto.getCost();
                 }
             }
@@ -75,6 +85,7 @@ public class PlanService {
         return resultDto;
     }
 
+    @Transactional
     public PlanDto updatePlan(Long planId, PlanDto dto) {
         Plan plan = planRepository.findById(planId)
                 .orElseThrow(() -> new RuntimeException("존재하지 않는 여행계획입니다."));
@@ -83,7 +94,11 @@ public class PlanService {
         updateSchedule(plan, dto.getSchedules());
         planRepository.save(plan);
 
-        return PlanDto.from(plan);
+        int totalCost = calculateTotalCost(dto.getSchedules());
+        PlanDto updatedPlanDto = PlanDto.from(plan);
+        updatedPlanDto.setTotalCost(totalCost);
+
+        return updatedPlanDto;
     }
 
     public void updateSchedule(Plan plan, List<ScheduleDto> scheduleDtos) {
@@ -127,28 +142,21 @@ public class PlanService {
                     });
             placeDto.updatePlaceBasicInfo(placeDto, place);
 
-            updatePlaceDetails(place, placeDto.getPlaceDetails());
+            if(placeDto.getPlaceDetails() != null) {
+                updatePlaceDetails(place, placeDto.getPlaceDetails());
+            }
         }
     }
 
-    public void updatePlaceDetails(Place place, List<PlaceDetailsDto> placeDetailsDtos) {
+    public void updatePlaceDetails(Place place, PlaceDetailsDto placeDetailsDto) {
 
-        place.getPlaceDetails().removeIf(details ->
-                placeDetailsDtos.stream().noneMatch(placeDetailsDto -> placeDetailsDto.getVisitTime().equals(details.getVisitTime())));
-
-        for (PlaceDetailsDto detailsDto : placeDetailsDtos) {
-            PlaceDetails details = place.getPlaceDetails().stream()
-                    .filter(d -> d.getVisitTime().equals(detailsDto.getVisitTime()))
-                    .findFirst()
-                    .orElseGet(() -> {
-                        PlaceDetails newDetails = new PlaceDetails();
-                        newDetails.setPlace(place);
-                        place.getPlaceDetails().add(newDetails);
-
-                        return newDetails;
-                    });
-            detailsDto.updatePlaceDetailsBasicInfo(detailsDto, details);
-        }
+        PlaceDetails details = place.getPlaceDetails() != null ? place.getPlaceDetails() : new PlaceDetails();
+        details.setMemo(placeDetailsDto.getMemo());
+        details.setCost(placeDetailsDto.getCost());
+        details.setVisitTime(placeDetailsDto.getVisitTime());
+        details.setPlace(place);
+        place.setPlaceDetails(details);
+        placeDetailsRepository.save(details);
     }
 
     public void deletePlan(Long planId) {
@@ -157,6 +165,18 @@ public class PlanService {
 
         planRepository.delete(plan);
     }
+
+    public int calculateTotalCost(List<ScheduleDto> scheduleDtos) {
+        int totalCost = 0;
+        for (ScheduleDto scheduleDto : scheduleDtos) {
+            for (PlaceDto placeDto : scheduleDto.getPlaces()) {
+                totalCost += placeDto.getPlaceDetails().getCost();;
+            }
+        }
+        return totalCost;
+    }
+
+    
 
     @Transactional(readOnly = true)
     public PlanResponse getPlanDetails(Long planId, Long memberId) {
