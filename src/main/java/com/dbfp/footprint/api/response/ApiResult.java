@@ -8,7 +8,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class ApiResult<T> {
-    private boolean success;
+    private boolean success = true;
 
     private ApiError error;
 
