@@ -1,6 +1,5 @@
 package com.dbfp.footprint.api.controller.plan;
 
-
 import com.dbfp.footprint.api.response.FindAllPlanBookmarkResponse;
 import com.dbfp.footprint.api.response.ApiResult;
 import com.dbfp.footprint.api.service.plan.PlanBookmarkService;

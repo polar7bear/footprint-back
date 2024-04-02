@@ -41,9 +41,6 @@ public class PlanResponse {
     @Schema(description = "계획 일정")
     private List<ScheduleDto> schedules;
 
-    @Setter
-    @Schema(description = "총 비용", example = "1000")
-    private int totalCost;
 
     @Schema(description = "좋아요 수", example = "10")
     private int likeCount;
