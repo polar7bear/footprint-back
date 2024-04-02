@@ -89,7 +89,7 @@ public class ReivewController {
                     @ApiResponse(responseCode = "200", description = "성공적으로 검색되었습니다."),
                     @ApiResponse(responseCode = "400", description = "잘못된 요청 값")
             })
-    @GetMapping("/api/search-notice/list")
+    @GetMapping("/search-reviews")
     public ResponseEntity<Page<ReviewListDto>> searchReviews(@RequestParam(value = "searchKeyword", required = false) String searchKeyword,
                                                                    @RequestParam(value = "page", defaultValue = "0") int page,
                                                                    @RequestParam(value = "size", defaultValue = "10") int size) {
