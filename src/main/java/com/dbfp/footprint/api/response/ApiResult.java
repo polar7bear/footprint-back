@@ -14,7 +14,7 @@ public class ApiResult<T> {
 
     private T data;
 
-    private long cost = -1;
+    private long responseTime = -1;
 
     private boolean checkedContext(){
         return ResponseContext.requestAt.get() != null && ResponseContext.requestAt.get() != null;
@@ -22,7 +22,7 @@ public class ApiResult<T> {
 
     public ApiResult() {
         if(checkedContext()){
-            this.cost = System.currentTimeMillis() - ResponseContext.requestAt.get();
+            this.responseTime = System.currentTimeMillis() - ResponseContext.requestAt.get();
         }
     }
 
@@ -30,14 +30,14 @@ public class ApiResult<T> {
         this.success = success;
         this.error = error;
         if(checkedContext()){
-            this.cost = System.currentTimeMillis() - ResponseContext.requestAt.get();
+            this.responseTime = System.currentTimeMillis() - ResponseContext.requestAt.get();
         }
     }
 
     public ApiResult(T data) {
         this.data = data;
         if(checkedContext()){
-            this.cost = System.currentTimeMillis() - ResponseContext.requestAt.get();
+            this.responseTime = System.currentTimeMillis() - ResponseContext.requestAt.get();
         }
     }
 
@@ -46,7 +46,7 @@ public class ApiResult<T> {
         this.success = false;
 
         if(checkedContext()){
-            this.cost = System.currentTimeMillis() - ResponseContext.requestAt.get();
+            this.responseTime = System.currentTimeMillis() - ResponseContext.requestAt.get();
         }
     }
 
@@ -56,7 +56,7 @@ public class ApiResult<T> {
                 "success=" + success +
                 ", error=" + error +
                 ", data=" + data +
-                ", cost=" + cost +
+                ", responseTime=" + responseTime +
                 '}';
     }
 }
