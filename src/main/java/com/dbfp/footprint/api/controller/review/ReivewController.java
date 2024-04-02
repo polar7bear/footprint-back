@@ -83,6 +83,26 @@ public class ReivewController {
         return new ResponseEntity<>(reviews, HttpStatus.OK);
     }
 
+    @Operation(
+            summary = "리뷰 검색 결과", description = "제목과 글에 검색어가 포함된 리뷰 목록이 반환되는 API",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "성공적으로 검색되었습니다."),
+                    @ApiResponse(responseCode = "400", description = "잘못된 요청 값")
+            })
+    @GetMapping("/api/search-notice/list")
+    public ResponseEntity<Page<ReviewListDto>> searchReviews(@RequestParam(value = "searchKeyword", required = false) String searchKeyword,
+                                                                   @RequestParam(value = "page", defaultValue = "0") int page,
+                                                                   @RequestParam(value = "size", defaultValue = "10") int size) {
+        Page<ReviewListDto> searchReviewList;
+        if (searchKeyword == null) {
+            searchReviewList = reviewService.findAllReviewsBySort("id", page, size);
+        } else {
+            searchReviewList = reviewService.searchReviews(searchKeyword, page, size);
+        }
+
+        return new ResponseEntity<>(searchReviewList, HttpStatus.OK);
+    }
+
     //좋아요 추가
     @PostMapping("/reviews/add-likes")
     @Operation(summary = "리뷰 좋아요 추가", description = "리뷰에 좋아요를 추가할 때 쓰는 API")

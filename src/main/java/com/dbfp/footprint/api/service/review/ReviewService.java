@@ -95,6 +95,13 @@ public class ReviewService {
         return reviewsListPage.map(this::reviewListMap);
     }
 
+    public Page<ReviewListDto> searchReviews(String searchKeyword, int page, int size) {
+        Page<Review> noticeSearchPage = reviewRepository.findByTitleContainingOrContentContaining(
+                searchKeyword.trim(), PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, "Id")));
+
+        return noticeSearchPage.map(this::reviewListMap);
+    }
+
     private ReviewListDto reviewListMap(Review review) {
         if (review.getImages().isEmpty()) {
             return new ReviewListDto(
