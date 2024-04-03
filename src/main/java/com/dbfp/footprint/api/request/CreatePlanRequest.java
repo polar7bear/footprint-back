@@ -13,6 +13,10 @@ import java.util.List;
 @AllArgsConstructor
 public class CreatePlanRequest {
 
+    private Long id;
+
+    private Long originalPlanId;
+
     @NotBlank(message = "제목을 입력해주세요")
     @Max(value = 45, message = "제목은 15자 이내로 입력해주세요")
     private String title;
