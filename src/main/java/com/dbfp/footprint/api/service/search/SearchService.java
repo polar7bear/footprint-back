@@ -5,6 +5,8 @@ import com.dbfp.footprint.api.response.PlanResponse;
 import com.dbfp.footprint.domain.plan.Plan;
 import com.dbfp.footprint.domain.plan.QPlan;
 import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.types.OrderSpecifier;
+import com.querydsl.core.types.dsl.PathBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
@@ -12,9 +14,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -65,10 +69,39 @@ public class SearchService {
                     .or(qPlan.region.likeIgnoreCase(keywordLike)));
         }
 
+        // 정렬 처리
+        List<OrderSpecifier<?>> orders = new ArrayList<>();
+        if (pageable.getSort().isUnsorted()) {
+            orders.add(qPlan.id.desc());
+        } else {
+            pageable.getSort().forEach(order -> {
+                switch (order.getProperty()) {
+                    case "id":
+                        orders.add(order.isAscending() ? qPlan.id.asc() : qPlan.id.desc());
+                        break;
+                    case "region":
+                        orders.add(order.isAscending() ? qPlan.region.asc() : qPlan.region.desc());
+                        break;
+                    case "likeCount":
+                        orders.add(order.isAscending() ? qPlan.likeCount.asc() : qPlan.likeCount.desc());
+                        break;
+                    case "bookmarkCount":
+                        orders.add(order.isAscending() ? qPlan.bookmarkCount.asc() : qPlan.bookmarkCount.desc());
+                        break;
+                    // Add more cases for other sortable fields
+                    default:
+                        // Handle or log unknown sort properties
+                        break;
+                }
+            });
+        }
+
+
         // 검색 쿼리 실행
         List<Plan> results = queryFactory
                 .selectFrom(qPlan)
                 .where(condition)
+                .orderBy(orders.toArray(new OrderSpecifier[0]))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
