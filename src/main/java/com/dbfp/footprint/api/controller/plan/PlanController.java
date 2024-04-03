@@ -67,17 +67,17 @@ public class PlanController {
         return ResponseEntity.ok(planDtos);
     }
 
-    @GetMapping("/search")
-    public ResponseEntity<Page<PlanResponse>> searchPlans(
-            @RequestParam(required = false) String keyword,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size,
-            @RequestParam(defaultValue = "id,desc") String sort) {
-
-        Pageable pageable = preparePageable(page, size, sort);
-        Page<PlanResponse> planDtos = planService.searchPlansByKeyword(keyword, pageable);
-        return ResponseEntity.ok(planDtos);
-    }
+//    @GetMapping("/search")
+//    public ResponseEntity<Page<PlanResponse>> searchPlans(
+//            @RequestParam(required = false) String keyword,
+//            @RequestParam(defaultValue = "0") int page,
+//            @RequestParam(defaultValue = "10") int size,
+//            @RequestParam(defaultValue = "id,desc") String sort) {
+//
+//        Pageable pageable = preparePageable(page, size, sort);
+//        Page<PlanResponse> planDtos = planService.searchPlansByKeyword(keyword, pageable);
+//        return ResponseEntity.ok(planDtos);
+//    }
 
     private Pageable preparePageable(int page, int size, String sort) {
         String[] sortArr = sort.split(",");
