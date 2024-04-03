@@ -10,6 +10,7 @@ import com.dbfp.footprint.exception.plan.PlanNotVisibleException;
 import com.dbfp.footprint.exception.schedule.ScheduleNotFoundException;
 import com.dbfp.footprint.shared.type.ApiErrorType;
 import io.swagger.v3.oas.annotations.Operation;
+import org.springframework.data.mapping.PropertyReferenceException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -58,4 +59,13 @@ public class GlobalExceptionHandler {
         ApiError error = new ApiError(ApiErrorType.NOT_FOUND, "Schedule not found", e.getMessage());
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResult<>(false, error));
     }
+
+    @ExceptionHandler(PropertyReferenceException.class)
+    public ResponseEntity<ApiResult<Void>> handlePropertyReferenceException(PropertyReferenceException e) {
+         // 수정된 부분: 타입의 단순 이름을 얻기 위해 getType().getType()을 사용합니다.
+        String typeName = e.getType() != null ? e.getType().getType().getSimpleName() : "Unknown";
+        ApiError error = new ApiError(ApiErrorType.BAD_REQUEST, "Invalid Sort Parameter", "'" + e.getPropertyName() + "' 속성은(는) 타입 '" + typeName + "'에 존재하지 않습니다.");
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResult<>(false, error));
+     }
 }
+
