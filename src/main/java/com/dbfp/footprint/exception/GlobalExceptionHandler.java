@@ -10,11 +10,16 @@ import com.dbfp.footprint.exception.plan.PlanNotVisibleException;
 import com.dbfp.footprint.exception.schedule.ScheduleNotFoundException;
 import com.dbfp.footprint.shared.type.ApiErrorType;
 import io.swagger.v3.oas.annotations.Operation;
+import org.hibernate.query.sqm.UnknownPathException;
+import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.data.mapping.PropertyReferenceException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -62,10 +67,33 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(PropertyReferenceException.class)
     public ResponseEntity<ApiResult<Void>> handlePropertyReferenceException(PropertyReferenceException e) {
-         // 수정된 부분: 타입의 단순 이름을 얻기 위해 getType().getType()을 사용합니다.
         String typeName = e.getType() != null ? e.getType().getType().getSimpleName() : "Unknown";
         ApiError error = new ApiError(ApiErrorType.BAD_REQUEST, "Invalid Sort Parameter", "'" + e.getPropertyName() + "' 속성은(는) 타입 '" + typeName + "'에 존재하지 않습니다.");
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResult<>(false, error));
      }
+
+    @ExceptionHandler({UnknownPathException.class, InvalidDataAccessApiUsageException.class})
+    public ResponseEntity<ApiResult<Void>> handleSearchException(RuntimeException e) {
+        String errorMessage = "Invalid Query Parameter. ";
+        // 정규 표현식 패턴 수정
+        Pattern pattern = Pattern.compile("Could not resolve attribute '([^']+)' of '([^']+)'");
+        Matcher matcher = pattern.matcher(e.getMessage());
+
+        if (matcher.find()) {
+            String attribute = matcher.group(1); // 속성 이름 추출
+            // 엔티티 이름 추출 (마지막 '.' 기준으로 추출)
+            String entity = matcher.group(2).substring(matcher.group(2).lastIndexOf('.') + 1);
+
+            errorMessage += "'" + attribute + "' 속성은(는) 타입 '" + entity + "'에 존재하지 않습니다.";
+        } else {
+            errorMessage += "요청 파라미터를 확인해주세요.";
+        }
+
+        ApiError error = new ApiError(ApiErrorType.BAD_REQUEST, "Invalid Sort Parameter", errorMessage);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResult<>(false, error));
+    }
+
+
+
 }
 
