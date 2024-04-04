@@ -9,6 +9,7 @@ import com.dbfp.footprint.api.request.review.UpdateReviewRequest;
 import com.dbfp.footprint.domain.Member;
 import com.dbfp.footprint.domain.review.Image;
 import com.dbfp.footprint.domain.review.Review;
+import com.dbfp.footprint.domain.review.ReviewLike;
 import com.dbfp.footprint.dto.review.ReviewDto;
 import com.dbfp.footprint.dto.review.ReviewLikeDto;
 import com.dbfp.footprint.dto.review.ReviewListDto;
@@ -66,6 +67,7 @@ public class ReviewService {
         return ReviewDto.of(review, images);
     }
 
+    //내가 작성한 리뷰 목록 조회
     @Transactional
     public Page<ReviewListDto> findAllMyReviewPage(Long memberId, int page, int size) {
         Member member = memberRepository.findById(memberId).orElseThrow(NotFoundMemberException::new);
@@ -74,6 +76,17 @@ public class ReviewService {
                 PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, "Id")));
 
         return reviewsListPage.map(this::reviewListMap);
+    }
+
+    //내가 좋아요 누른 리뷰 목록 조회
+    @Transactional
+    public Page<ReviewListDto> findAllMyLikedReviewPage(Long memberId, int page, int size) {
+        Member member = memberRepository.findById(memberId).orElseThrow(NotFoundMemberException::new);
+
+        Page<ReviewLike> reviewLikesListPage = reviewLikeRepository.findAllByMember(member,
+                PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, "Id")));
+
+        return reviewLikesListPage.map(this::reviewLikeMap);
     }
 
     //정렬 및 전체조회
@@ -95,6 +108,7 @@ public class ReviewService {
         return reviewsListPage.map(this::reviewListMap);
     }
 
+    //리뷰 검색
     @Transactional
     public Page<ReviewListDto> searchReviews(String searchKeyword, int page, int size) {
         Page<Review> noticeSearchPage = reviewRepository.findByTitleContainingOrContentContaining(
@@ -104,6 +118,25 @@ public class ReviewService {
     }
 
     private ReviewListDto reviewListMap(Review review) {
+        if (review.getImages().isEmpty()) {
+            return new ReviewListDto(
+                    review.getId(),
+                    review.getMember().getId(),
+                    review.getTitle(),
+                    null
+            );
+        } else {
+            return new ReviewListDto(
+                    review.getId(),
+                    review.getMember().getId(),
+                    review.getTitle(),
+                    review.getImages().get(0).getImageUrl()
+            );
+        }
+    }
+
+    private ReviewListDto reviewLikeMap(ReviewLike reviewLike) {
+        Review review = reviewLike.getReview();
         if (review.getImages().isEmpty()) {
             return new ReviewListDto(
                     review.getId(),
