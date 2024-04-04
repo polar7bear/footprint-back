@@ -284,7 +284,17 @@ public class PlanService {
         return planRepository.findByVisibleTrue(pageable)
                 .map(PlanResponse::from);
     }
+   }
 
+//    @Transactional(readOnly = true)
+//    public Page<PlanResponse> searchPlansByKeyword(String keyword, Pageable pageable) {
+//        String keywordLike = null;
+//        if (keyword != null && !keyword.isEmpty()) {
+//            keywordLike = "%" + keyword.toLowerCase() + "%";
+//        }
+//        return planRepository.findByKeyword(keywordLike, pageable)
+//                .map(PlanResponse::from);
+//    }
 
     @Transactional(readOnly = true)
     public Page<PlanResponse> findPlansByUserId(Long memberId, Pageable pageable) {
