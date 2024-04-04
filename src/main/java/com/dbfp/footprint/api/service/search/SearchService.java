@@ -26,97 +26,25 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class SearchService {
 
-//    private final PlanRepository planRepository;
-//
-//    @Transactional(readOnly = true)
-//    public Page<PlanResponse> searchPlansByKeyword(String keyword, Pageable pageable) {
-//        String keywordLike = processSearchKeyword(keyword);
-//        if (keywordLike != null) {
-//            // 검색어가 유효한 경우 검색을 수행하고 결과를 반환
-//            return planRepository.findByKeyword(keywordLike, pageable)
-//                    .map(PlanResponse::from);
-//        } else {
-//            // 검색어가 유효하지 않은 경우, 빈 페이지를 반환합니다.
-//            return Page.empty(pageable);
-//        }
-//    }
-//
-//    // 검색을 위한 키워드를 처리
-//    // SQL LIKE 검색에 적합한 형태로 변환
-//    // 키워드가 null이거나 빈 문자열인 경우 null을 반환
-//    protected String processSearchKeyword(String keyword) {
-//        if (keyword != null && !keyword.trim().isEmpty()) {
-//            return "%" + keyword.trim().toLowerCase() + "%";
-//        }
-//        return null;
-//    }
-    private final JPAQueryFactory queryFactory;
-
-    @Autowired
-    public SearchService(EntityManager em) {
-        this.queryFactory = new JPAQueryFactory(em);
-    }
+    private final PlanRepository planRepository;
 
     @Transactional(readOnly = true)
     public Page<PlanResponse> searchPlansByKeyword(String keyword, Pageable pageable) {
-        QPlan qPlan = QPlan.plan;
-        BooleanBuilder condition = new BooleanBuilder();
-
-        // 키워드 처리
-        if (keyword != null && !keyword.trim().isEmpty()) {
-            String keywordLike = "%" + keyword.trim().toLowerCase() + "%";
-            condition.and(qPlan.title.likeIgnoreCase(keywordLike)
-                    .or(qPlan.region.likeIgnoreCase(keywordLike)));
-        }
-
-        // 정렬 처리
-        List<OrderSpecifier<?>> orders = new ArrayList<>();
-        if (pageable.getSort().isUnsorted()) {
-            orders.add(qPlan.id.desc());
+        String keywordProcessed = processSearchKeyword(keyword);
+        if (keywordProcessed != null) {
+            return planRepository.findByKeywordIncludingPlaceName(keywordProcessed, pageable)
+                    .map(PlanResponse::from);
         } else {
-            pageable.getSort().forEach(order -> {
-                switch (order.getProperty()) {
-                    case "id":
-                        orders.add(order.isAscending() ? qPlan.id.asc() : qPlan.id.desc());
-                        break;
-                    case "region":
-                        orders.add(order.isAscending() ? qPlan.region.asc() : qPlan.region.desc());
-                        break;
-                    case "likeCount":
-                        orders.add(order.isAscending() ? qPlan.likeCount.asc() : qPlan.likeCount.desc());
-                        break;
-                    case "bookmarkCount":
-                        orders.add(order.isAscending() ? qPlan.bookmarkCount.asc() : qPlan.bookmarkCount.desc());
-                        break;
-                    // Add more cases for other sortable fields
-                    default:
-                        // Handle or log unknown sort properties
-                        break;
-                }
-            });
+            // 검색어가 유효하지 않은 경우
+            return Page.empty(pageable);
         }
-
-
-        // 검색 쿼리 실행
-        List<Plan> results = queryFactory
-                .selectFrom(qPlan)
-                .where(condition)
-                .orderBy(orders.toArray(new OrderSpecifier[0]))
-                .offset(pageable.getOffset())
-                .limit(pageable.getPageSize())
-                .fetch();
-
-        // 총 개수 조회
-        long total = queryFactory
-                .selectFrom(qPlan)
-                .where(condition)
-                .fetchCount();
-
-        // 결과 매핑
-        List<PlanResponse> content = results.stream()
-                .map(PlanResponse::from)
-                .collect(Collectors.toList());
-
-        return new PageImpl<>(content, pageable, total);
     }
+
+    protected String processSearchKeyword(String keyword) {
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            return keyword.trim().toLowerCase();
+        }
+        return null;
+    }
+
 }

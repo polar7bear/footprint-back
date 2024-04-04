@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface PlanRepository extends JpaRepository<Plan, Long> {
+public interface PlanRepository extends JpaRepository<Plan, Long>, CustomPlanRepository {
     @Query("SELECT p FROM Plan p WHERE p.id = :planId AND (p.visible = true OR p.member.id = :memberId)")
     Optional<Plan> findByIdAndVisible(Long planId, Long memberId);
     Page<Plan> findByVisibleTrue(Pageable pageable);
