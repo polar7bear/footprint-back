@@ -1,5 +1,6 @@
 package com.dbfp.footprint.api.controller.search;
 
+import com.dbfp.footprint.api.response.ApiResult;
 import com.dbfp.footprint.api.response.PlanResponse;
 import com.dbfp.footprint.api.service.search.SearchService;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +21,7 @@ public class SearchController {
 
     private final SearchService searchService;
     @GetMapping("/plans")
-    public ResponseEntity<Page<PlanResponse>> searchPlans(
+    public ResponseEntity<ApiResult<Page<PlanResponse>>> searchPlans(
             @RequestParam(required = false) String keyword,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
@@ -28,7 +29,7 @@ public class SearchController {
 
         Pageable pageable = preparePageable(page, size, sort);
         Page<PlanResponse> planDtos = searchService.searchPlansByKeyword(keyword, pageable);
-        return ResponseEntity.ok(planDtos);
+        return ResponseEntity.ok(new ApiResult<>(planDtos));
     }
 
     private Pageable preparePageable(int page, int size, String sort) {

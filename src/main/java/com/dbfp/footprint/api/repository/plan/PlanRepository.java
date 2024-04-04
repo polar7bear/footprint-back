@@ -14,12 +14,8 @@ import java.util.Optional;
 
 @Repository
 public interface PlanRepository extends JpaRepository<Plan, Long>, CustomPlanRepository {
-    @Query("SELECT p FROM Plan p WHERE p.id = :planId AND (p.visible = true OR p.member.id = :memberId)")
-    Optional<Plan> findByIdAndVisible(Long planId, Long memberId);
     Page<Plan> findByVisibleTrue(Pageable pageable);
-
-    List<Plan> findByMemberId(Long memberId);
-
+    
     @Query("SELECT p FROM Plan p WHERE p.visible = true AND " +
             "(LOWER(p.title) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
             "OR LOWER(p.region) LIKE LOWER(CONCAT('%', :keyword, '%')))")

@@ -40,6 +40,7 @@ public class CustomPlanRepositoryImpl implements CustomPlanRepository {
         });
 
 
+
         List<Plan> plans = queryFactory
                 .selectFrom(plan)
                 .leftJoin(plan.schedules, schedule)
@@ -50,7 +51,7 @@ public class CustomPlanRepositoryImpl implements CustomPlanRepository {
                                 .or(place.placeName.containsIgnoreCase(keyword))))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
-                .orderBy(orders.toArray(new OrderSpecifier<?>[0])) // 배열 타입을 명시적으로 지정합니다.
+                .orderBy(orders.toArray(new OrderSpecifier<?>[0]))
                 .fetch();
 
         long total = queryFactory
