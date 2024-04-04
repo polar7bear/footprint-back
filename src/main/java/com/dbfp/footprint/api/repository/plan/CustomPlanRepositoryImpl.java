@@ -1,6 +1,7 @@
 package com.dbfp.footprint.api.repository.plan;
 
 import com.dbfp.footprint.domain.place.QPlace;
+import com.dbfp.footprint.domain.place.QPlaceDetails;
 import com.dbfp.footprint.domain.plan.Plan;
 import com.dbfp.footprint.domain.plan.QPlan;
 import com.dbfp.footprint.domain.plan.QSchedule;
@@ -26,53 +27,14 @@ public class CustomPlanRepositoryImpl implements CustomPlanRepository {
     public CustomPlanRepositoryImpl(EntityManager em) {
         this.queryFactory = new JPAQueryFactory(em);
     }
-//
-//    @Override
-//    public Page<Plan> findByKeywordIncludingPlaceName(String keyword, Pageable pageable) {
-//        QPlan plan = QPlan.plan;
-//        QSchedule schedule = QSchedule.schedule;
-//        QPlace place = QPlace.place;
-//
-//        List<OrderSpecifier<?>> orders = new ArrayList<>();
-//        pageable.getSort().forEach(order -> {
-//            PathBuilder<Object> entityPath = new PathBuilder<>(Plan.class, "plan");
-//            OrderSpecifier<?> orderSpecifier = new OrderSpecifier(order.isAscending() ? Order.ASC : Order.DESC, entityPath.get(order.getProperty()));
-//            orders.add(orderSpecifier);
-//        });
-//
-//
-//
-//        List<Plan> plans = queryFactory
-//                .selectFrom(plan)
-//                .leftJoin(plan.schedules, schedule)
-//                .leftJoin(schedule.place, place)
-//                .where(plan.visible.isTrue()
-//                        .and(plan.title.containsIgnoreCase(keyword)
-//                                .or(plan.region.containsIgnoreCase(keyword))
-//                                .or(place.placeName.containsIgnoreCase(keyword))))
-//                .offset(pageable.getOffset())
-//                .limit(pageable.getPageSize())
-//                .orderBy(orders.toArray(new OrderSpecifier<?>[0]))
-//                .fetch();
-//
-//        long total = queryFactory
-//                .selectFrom(plan)
-//                .leftJoin(plan.schedules, schedule)
-//                .leftJoin(schedule.place, place)
-//                .where(plan.visible.isTrue()
-//                        .and(plan.title.containsIgnoreCase(keyword)
-//                                .or(plan.region.containsIgnoreCase(keyword))
-//                                .or(place.placeName.containsIgnoreCase(keyword))))
-//                .fetchCount();
-//
-//        return new PageImpl<>(plans, pageable, total);
-//    }
+
 
     @Override
     public Page<Plan> findByKeywordIncludingPlaceName(String keyword, Pageable pageable) {
         QPlan plan = QPlan.plan;
         QSchedule schedule = QSchedule.schedule;
         QPlace place = QPlace.place;
+        QPlaceDetails placeDetails = QPlaceDetails.placeDetails;
 
         List<OrderSpecifier<?>> orders = new ArrayList<>();
 
@@ -95,10 +57,12 @@ public class CustomPlanRepositoryImpl implements CustomPlanRepository {
                 .selectFrom(plan)
                 .leftJoin(plan.schedules, schedule)
                 .leftJoin(schedule.place, place)
+                .leftJoin(place.placeDetails, placeDetails)
                 .where(plan.visible.isTrue()
                         .and(plan.title.containsIgnoreCase(keyword)
                                 .or(plan.region.containsIgnoreCase(keyword))
-                                .or(place.placeName.containsIgnoreCase(keyword))))
+                                .or(place.placeName.containsIgnoreCase(keyword))
+                                .or(placeDetails.memo.containsIgnoreCase(keyword))))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .orderBy(orders.toArray(new OrderSpecifier<?>[0]))
