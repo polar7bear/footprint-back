@@ -69,20 +69,6 @@ public class ReivewController {
         return new ResponseEntity<>(myReviews, HttpStatus.OK);
     }
 
-    //내가 좋아요한 리뷰목록 조회
-    @GetMapping("/my/liked-reviews")
-    @Operation(summary = "내가 좋아요한 리뷰 목록 조회", description = "내가 좋아요 누른 리뷰를 목록으로 받아올 때 쓰는 API")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "400", description = "잘못된 요청 값"),
-            @ApiResponse(responseCode = "401", description = "헤더 없음 or 토큰 불일치", content = @Content(schema = @Schema(example = "INVALID_HEADER or INVALID_TOKEN")))
-    })
-    public ResponseEntity<Page<ReviewListDto>> findMyLikedReviews(@RequestParam(value = "memberId") Long memberId,
-                                                             @RequestParam(value = "page", defaultValue = "0") int page,
-                                                             @RequestParam(value = "size", defaultValue = "8") int size){
-        Page<ReviewListDto> myReviews = reviewService.findAllMyLikedReviewPage(memberId, page, size);
-        return new ResponseEntity<>(myReviews, HttpStatus.OK);
-    }
-
     //리뷰 전체 조회와 정렬
     @GetMapping("/reviews")
     @Operation(summary = "리뷰 전체 조회", description = "메인 화면에서 최신/좋아요 순으로 정렬된 리뷰 목록을 표시할 때 쓰는 API")
@@ -144,6 +130,22 @@ public class ReivewController {
         reviewService.subLikes(likeCommentDto);
         return new ResponseEntity<>("SUCCESS", HttpStatus.OK);
     }
+
+    //내가 좋아요한 리뷰목록 조회
+    @GetMapping("/my/liked-reviews")
+    @Operation(summary = "내가 좋아요한 리뷰 목록 조회", description = "내가 좋아요 누른 리뷰를 목록으로 받아올 때 쓰는 API")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "400", description = "잘못된 요청 값"),
+            @ApiResponse(responseCode = "401", description = "헤더 없음 or 토큰 불일치", content = @Content(schema = @Schema(example = "INVALID_HEADER or INVALID_TOKEN")))
+    })
+    public ResponseEntity<Page<ReviewListDto>> findMyLikedReviews(@RequestParam(value = "memberId") Long memberId,
+                                                             @RequestParam(value = "page", defaultValue = "0") int page,
+                                                             @RequestParam(value = "size", defaultValue = "8") int size){
+        Page<ReviewListDto> myReviews = reviewService.findAllMyLikedReviewPage(memberId, page, size);
+        return new ResponseEntity<>(myReviews, HttpStatus.OK);
+    }
+
+
 
     //리뷰 수정
     @PutMapping("/reviews")
