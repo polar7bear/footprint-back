@@ -55,14 +55,4 @@ public class Place {
         return place;
     }
 
-    // 장소 복사 생성자
-    public Place(Place originalPlace, Schedule copiedSchedule) {
-        this.schedule = copiedSchedule;
-        this.kakaoPlaceId = originalPlace.getKakaoPlaceId();
-        this.placeName = originalPlace.getPlaceName();
-        this.latitude = originalPlace.getLatitude();
-        this.longitude = originalPlace.getLongitude();
-        this.address = originalPlace.getAddress();
-    }
-
 }

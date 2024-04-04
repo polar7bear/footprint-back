@@ -27,4 +27,10 @@ public class CopyPlan {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "copied_plan_id", nullable = false)
     private Plan copiedPlan;
+
+    public CopyPlan(Member member, Plan originalPlan, Plan copiedPlan) {
+        this.member = member;
+        this.originalPlan = originalPlan;
+        this.copiedPlan = copiedPlan;
+    }
 }
