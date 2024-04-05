@@ -3,7 +3,7 @@ package com.dbfp.footprint.api.service.plan;
 import com.dbfp.footprint.api.repository.member.MemberRepository;
 import com.dbfp.footprint.api.repository.place.PlaceDetailsRepository;
 import com.dbfp.footprint.api.repository.place.PlaceRepository;
-//import com.dbfp.footprint.api.repository.plan.CopyPlanRepository;
+import com.dbfp.footprint.api.repository.plan.CopyPlanRepository;
 import com.dbfp.footprint.api.repository.plan.PlanBookmarkRepository;
 import com.dbfp.footprint.api.repository.plan.PlanLikeRepository;
 import com.dbfp.footprint.api.repository.plan.PlanRepository;
@@ -42,7 +42,7 @@ public class PlanService {
     private final MemberRepository memberRepository;
     private final PlanLikeRepository planLikeRepository;
     private final PlanBookmarkRepository planBookmarkRepository;
-    //private final CopyPlanRepository copyPlanRepository;
+    private final CopyPlanRepository copyPlanRepository;
 
     @Transactional
     public PlanDto createPlan(PlanDto planDto, Long memberId) {
@@ -284,7 +284,7 @@ public class PlanService {
         return planRepository.findByVisibleTrue(pageable)
                 .map(PlanResponse::from);
     }
-   }
+
 
 //    @Transactional(readOnly = true)
 //    public Page<PlanResponse> searchPlansByKeyword(String keyword, Pageable pageable) {
