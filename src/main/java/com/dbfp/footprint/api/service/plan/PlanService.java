@@ -23,9 +23,7 @@ import com.dbfp.footprint.exception.plan.PlanNotFoundException;
 import com.dbfp.footprint.exception.plan.PlanNotVisibleException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -64,14 +62,8 @@ public class PlanService {
             for (PlaceDto placeDto : scheduleDto.getPlaces()) {
                 Place place = Place.of(placeDto, schedule);
                 place = placeRepository.save(place);
-
-                /*for (PlaceDetailsDto placeDetailsDto : placeDto.getPlaceDetails()) {
-                    PlaceDetails details = PlaceDetails.of(placeDetailsDto, place);
-                    placeDetailsRepository.save(details);
-
-                    totalCost += placeDetailsDto.getCost();
-                }*/
                 PlaceDetailsDto placeDetailsDto = placeDto.getPlaceDetails();
+
                 if (placeDetailsDto != null) {
                     PlaceDetails details = PlaceDetails.of(placeDetailsDto, place);
                     placeDetailsRepository.save(details);
@@ -142,7 +134,7 @@ public class PlanService {
                     });
             placeDto.updatePlaceBasicInfo(placeDto, place);
 
-            if(placeDto.getPlaceDetails() != null) {
+            if (placeDto.getPlaceDetails() != null) {
                 updatePlaceDetails(place, placeDto.getPlaceDetails());
             }
         }
@@ -170,13 +162,83 @@ public class PlanService {
         int totalCost = 0;
         for (ScheduleDto scheduleDto : scheduleDtos) {
             for (PlaceDto placeDto : scheduleDto.getPlaces()) {
-                totalCost += placeDto.getPlaceDetails().getCost();;
+                totalCost += placeDto.getPlaceDetails().getCost();
+                ;
             }
         }
         return totalCost;
     }
 
-    
+    @Transactional(readOnly = true)
+    public PlanDto getCopyPlan(Long planId) {
+        Plan originalPlan = planRepository.findById(planId)
+                .orElseThrow(() -> new PlanNotFoundException("존재하지 않는 여행 계획입니다."));
+
+        if (!originalPlan.isCopyAllowed()) {
+            throw new RuntimeException("복사가 허용되지 않은 일정입니다.");
+        }
+
+        PlanDto planDto = PlanDto.from(originalPlan);
+        planDto.setId(planId);
+        List<ScheduleDto> scheduleDtos = originalPlan.getSchedules().stream()
+                .map(schedule -> {
+                    ScheduleDto scheduleDto = ScheduleDto.from(schedule);
+                    List<PlaceDto> placeDtos = schedule.getPlace().stream()
+                            .map(place -> {
+                                PlaceDto placeDto = PlaceDto.from(place);
+                                PlaceDetailsDto placeDetailsDto = PlaceDetailsDto.from(place.getPlaceDetails());
+                                placeDto.setPlaceDetails(placeDetailsDto);
+                                return placeDto;
+                            })
+                            .collect(Collectors.toList());
+                    scheduleDto.setPlaces(placeDtos);
+                    return scheduleDto;
+                })
+                .collect(Collectors.toList());
+
+        planDto.setSchedules(scheduleDtos);
+        return planDto;
+    }
+
+    @Transactional
+    public PlanDto createCopyPlan(PlanDto planDto, Long memberId, Long originalPlanId) {
+
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new RuntimeException("존재하지 않는 회원입니다."));
+
+        Plan originalPlan = planRepository.findById(originalPlanId)
+                .orElseThrow(() -> new RuntimeException("존재하지 않는 여행 계획입니다."));
+
+        Plan plan = Plan.of(planDto, member);
+        plan = planRepository.save(plan);
+        Plan finalPlan = plan;
+        int totalCost = 0;
+        finalPlan.setCopyAllowed(false);
+
+        for (ScheduleDto scheduleDto : planDto.getSchedules()) {
+            Schedule schedule = Schedule.of(scheduleDto, finalPlan);
+            schedule = scheduleRepository.save(schedule);
+
+            for (PlaceDto placeDto : scheduleDto.getPlaces()) {
+                Place place = Place.of(placeDto, schedule);
+                place = placeRepository.save(place);
+                PlaceDetailsDto placeDetailsDto = placeDto.getPlaceDetails();
+
+                if (placeDetailsDto != null) {
+                    PlaceDetails details = PlaceDetails.of(placeDetailsDto, place);
+                    placeDetailsRepository.save(details);
+                    totalCost += placeDetailsDto.getCost();
+                }
+            }
+        }
+
+        CopyPlan copyPlan = new CopyPlan(member, originalPlan, plan);
+        copyPlanRepository.save(copyPlan);
+
+        PlanDto resultDto = PlanDto.from(finalPlan);
+        resultDto.setTotalCost(totalCost);
+        return resultDto;
+    }
 
     @Transactional(readOnly = true)
     public PlanResponse getPlanDetails(Long planId, Long memberId) {
@@ -190,7 +252,7 @@ public class PlanService {
     }
 
     @Transactional(readOnly = true)
-    public List<ScheduleDto> getSchedulesByPlanId(Long planId, Long memberId){
+    public List<ScheduleDto> getSchedulesByPlanId(Long planId, Long memberId) {
         //여행 계획 존재하는지 확인
         Plan plan = getPlanIfExists(planId);
         //소유자 확인
@@ -221,7 +283,8 @@ public class PlanService {
     public Page<PlanResponse> getPublicPlans(Pageable pageable) {
         return planRepository.findByVisibleTrue(pageable)
                 .map(PlanResponse::from);
-   }
+    }
+
 
 //    @Transactional(readOnly = true)
 //    public Page<PlanResponse> searchPlansByKeyword(String keyword, Pageable pageable) {
@@ -232,6 +295,7 @@ public class PlanService {
 //        return planRepository.findByKeyword(keywordLike, pageable)
 //                .map(PlanResponse::from);
 //    }
+
     @Transactional(readOnly = true)
     public Page<PlanResponse> findPlansByUserId(Long memberId, Pageable pageable) {
         return planRepository.findByMemberId(memberId, pageable).map(PlanResponse::from);

@@ -1,17 +1,15 @@
 package com.dbfp.footprint.api.controller.plan;
 
-import com.dbfp.footprint.api.response.ApiResult;
 import com.dbfp.footprint.api.response.FindAllPlanBookmarkResponse;
+import com.dbfp.footprint.api.response.ApiResult;
 import com.dbfp.footprint.api.service.plan.PlanBookmarkService;
 import com.dbfp.footprint.dto.PlanBookmarkDto;
-import io.swagger.v3.oas.annotations.Operation;
 import com.dbfp.footprint.dto.PlanDto;
-
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 import java.util.stream.Collectors;
 

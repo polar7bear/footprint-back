@@ -2,18 +2,23 @@ package com.dbfp.footprint.api.response;
 
 import com.dbfp.footprint.shared.ResponseContext;
 import com.dbfp.footprint.shared.type.ApiErrorType;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
 public class ApiResult<T> {
+    @Schema(description = "요청 성공 여부")
     private boolean success = true;
 
+    @Schema(description = "에러 정보", nullable = true)
     private ApiError error;
 
+    @Schema(description = "응답 데이터")
     private T data;
 
+    @Schema(description = "응답 시간(ms)")
     private long responseTime = -1;
 
     private boolean checkedContext(){

@@ -27,18 +27,24 @@ public class PlanController {
 
     private final PlanService planService;
 
-
     @PostMapping
-    public ResponseEntity<CreatePlanResponse> createPlan(@RequestBody CreatePlanRequest request, @RequestParam Long memberId) {
+    public ResponseEntity<CreatePlanResponse> createPlanOrCopyPlan(@RequestBody CreatePlanRequest request, @RequestParam Long memberId) {
         PlanDto planDto = PlanDto.convertToPlanDto(request);
+        PlanDto createdPlanDto;
 
-        PlanDto createdPlanDto = planService.createPlan(planDto, memberId);
+        if (request.getOriginalPlanId() != null) {
+            // 복사 로직 실행
+            createdPlanDto = planService.createCopyPlan(planDto, memberId, request.getOriginalPlanId());
+        } else {
+            // 일반 계획 생성 로직 실행
+            createdPlanDto = planService.createPlan(planDto, memberId);
+        }
 
         CreatePlanResponse response = CreatePlanResponse.fromPlan(createdPlanDto);
         return ResponseEntity.ok(response);
     }
 
-    @PutMapping("/{planId}")
+    @PatchMapping("/{planId}")
     public ResponseEntity<CreatePlanResponse> updatePlan(@PathVariable Long planId, @RequestBody CreatePlanRequest request) {
         PlanDto planDto = PlanDto.convertToPlanDto(request);
 

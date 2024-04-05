@@ -42,12 +42,4 @@ public class PlaceDetails {
 
         return details;
     }
-
-    // 복사 생성자
-    public PlaceDetails(PlaceDetails originalDetails, Place copiedPlace) {
-        this.place = copiedPlace;
-        this.memo = originalDetails.getMemo();
-        this.cost = originalDetails.getCost();
-        this.visitTime = originalDetails.getVisitTime();
-    }
 }

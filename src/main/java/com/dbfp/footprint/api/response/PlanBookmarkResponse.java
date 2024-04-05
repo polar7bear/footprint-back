@@ -13,11 +13,11 @@ import java.time.LocalDate;
 @Setter
 @Schema(description = "계획 북마크 응답 정보")
 public class PlanBookmarkResponse {
-    @Schema(description = "북마크 ID", example = "123")
-    private Long id;
+//    @Schema(description = "북마크 ID", example = "123")
+//    private Long bookmsrkId;
 
-    @Schema(description = "회원 ID", example = "456")
-    private Long memberId;
+   // @Schema(description = "회원 ID", example = "456")
+   // private Long memberId;
 
     @Schema(description = "계획 ID", example = "789")
     private Long planId;
@@ -37,8 +37,8 @@ public class PlanBookmarkResponse {
     public static PlanBookmarkResponse from(PlanBookmark bookmark) {
         Plan plan = bookmark.getPlan();
         PlanBookmarkResponse response = new PlanBookmarkResponse();
-        response.setId(bookmark.getId());
-        response.setMemberId(bookmark.getMember().getId());
+        //response.setBookmsrkId(bookmark.getId());
+       // response.setMemberId(bookmark.getMember().getId());
         response.setPlanId(plan.getId());
         response.setPlanTitle(plan.getTitle());
         response.setStartDate(plan.getStartDate());

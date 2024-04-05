@@ -8,12 +8,16 @@ import lombok.Setter;
 @Getter
 @Setter
 public class ApiError {
+    @Schema(description = "에러 유형")
     private ApiErrorType type;
 
+    @Schema(description = "에러 코드")
     private String code;
 
+    @Schema(description = "에러 메시지")
     private String message;
 
+    @Schema(description = "에러 스택(디버깅용)", nullable = true)
     private String errorStack;
 
     public ApiError() {

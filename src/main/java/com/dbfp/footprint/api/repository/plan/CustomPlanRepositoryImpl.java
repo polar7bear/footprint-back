@@ -37,8 +37,7 @@ public class CustomPlanRepositoryImpl implements CustomPlanRepository {
         QPlaceDetails placeDetails = QPlaceDetails.placeDetails;
 
         List<OrderSpecifier<?>> orders = new ArrayList<>();
-
-        // Apply custom sorting if specified
+        
         if (pageable.getSort().isSorted()) {
             pageable.getSort().forEach(order -> {
                 PathBuilder<Object> entityPath = new PathBuilder<>(Object.class, plan.getMetadata().getName());

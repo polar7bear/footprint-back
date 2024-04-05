@@ -65,6 +65,7 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResult<>(false, error));
     }
 
+    @Operation(summary = "잘못된 정렬 파라미터 예외 처리", description = "정렬 파라미터가 유효하지 않을 때 발생하는 예외를 처리합니다.")
     @ExceptionHandler(PropertyReferenceException.class)
     public ResponseEntity<ApiResult<Void>> handlePropertyReferenceException(PropertyReferenceException e) {
         String typeName = e.getType() != null ? e.getType().getType().getSimpleName() : "Unknown";
@@ -72,6 +73,7 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResult<>(false, error));
      }
 
+    @Operation(summary = "잘못된 쿼리 파라미터 예외 처리", description = "쿼리 파라미터가 유효하지 않을 때 발생하는 예외를 처리합니다.")
     @ExceptionHandler({UnknownPathException.class, InvalidDataAccessApiUsageException.class})
     public ResponseEntity<ApiResult<Void>> handleSearchException(RuntimeException e) {
         String errorMessage = "Invalid Query Parameter. ";
