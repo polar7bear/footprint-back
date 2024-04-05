@@ -285,6 +285,7 @@ public class PlanService {
                 .map(PlanResponse::from);
     }
 
+
 //    @Transactional(readOnly = true)
 //    public Page<PlanResponse> searchPlansByKeyword(String keyword, Pageable pageable) {
 //        String keywordLike = null;
@@ -294,6 +295,7 @@ public class PlanService {
 //        return planRepository.findByKeyword(keywordLike, pageable)
 //                .map(PlanResponse::from);
 //    }
+
     @Transactional(readOnly = true)
     public Page<PlanResponse> findPlansByUserId(Long memberId, Pageable pageable) {
         return planRepository.findByMemberId(memberId, pageable).map(PlanResponse::from);
