@@ -83,4 +83,15 @@ public class Plan {
         this.likeCount--;
     }
 
+    //일정 복사 생성자
+    public Plan (Plan originalPlan, Member member) {
+        this.member = member;
+        this.title = originalPlan.getTitle();
+        this.startDate = originalPlan.getStartDate();
+        this.endDate = originalPlan.getEndDate();
+        this.region = originalPlan.getRegion();
+        this.visible = originalPlan.isVisible();
+        this.copyAllowed = false;
+        //복사한 일정은 다시 복사 되지않게
+    }
 }
