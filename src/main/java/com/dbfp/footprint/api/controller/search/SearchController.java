@@ -29,7 +29,6 @@ public class SearchController {
             @Parameter(description = "페이지 번호", example = "0") @RequestParam(defaultValue = "0") int page,
             @Parameter(description = "페이지 크기", example = "10") @RequestParam(defaultValue = "10") int size,
             @Parameter(description = "정렬 (예: id,desc)", example = "id,desc") @RequestParam(defaultValue = "id,desc") String sort) {
-
         Pageable pageable = preparePageable(page, size, sort);
         Page<PlanResponse> planDtos = searchService.searchPlansByKeyword(keyword, pageable);
         return ResponseEntity.ok(new ApiResult<>(planDtos));

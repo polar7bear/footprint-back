@@ -59,6 +59,7 @@ public class PlanController {
         return ResponseEntity.ok().build();
     }
 
+
     @Operation(summary = "계획 조회", description = "특정 계획의 상세 정보를 가져옵니다.")
     @GetMapping("/{planId}")
     public ResponseEntity<ApiResult<PlanResponse>> getPlanDetails(@PathVariable Long planId, @RequestParam(required = false) Long memberId) {
