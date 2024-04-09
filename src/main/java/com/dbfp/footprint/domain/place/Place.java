@@ -39,8 +39,8 @@ public class Place {
 
     private String address;
 
-    @OneToMany(mappedBy = "place", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<PlaceDetails> placeDetails = new ArrayList<>();
+    @OneToOne(mappedBy = "place", cascade = CascadeType.ALL, orphanRemoval = true)
+    private PlaceDetails placeDetails;
 
     public static Place of(PlaceDto dto, Schedule schedule) {
         Place place = new Place();

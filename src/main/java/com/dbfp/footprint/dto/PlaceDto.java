@@ -1,6 +1,7 @@
 package com.dbfp.footprint.dto;
 
 import com.dbfp.footprint.domain.place.Place;
+import com.dbfp.footprint.domain.place.PlaceDetails;
 import com.dbfp.footprint.domain.plan.Plan;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -27,18 +28,22 @@ public class PlaceDto {
 
     private String address;
 
-    private List<PlaceDetailsDto> placeDetails;
+    //private List<PlaceDetailsDto> placeDetails;
+
+    private PlaceDetailsDto placeDetails;
 
     public static PlaceDto from(Place entity) {
+        PlaceDetailsDto placeDetailsDto = null;
+        if (entity.getPlaceDetails() != null) {
+            placeDetailsDto = PlaceDetailsDto.from(entity.getPlaceDetails());
+        }
         return new PlaceDto(
                 entity.getKakaoPlaceId(),
                 entity.getPlaceName(),
                 entity.getLatitude(),
                 entity.getLongitude(),
                 entity.getAddress(),
-                entity.getPlaceDetails().stream()
-                        .map(PlaceDetailsDto::from)
-                        .collect(Collectors.toList())
+                placeDetailsDto
         );
     }
 

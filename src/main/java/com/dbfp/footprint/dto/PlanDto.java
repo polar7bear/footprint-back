@@ -12,8 +12,9 @@ import java.util.stream.Collectors;
 
 @Getter
 @Setter
-//@AllArgsConstructor
 public class PlanDto {
+
+    private Long id;
 
     private String title;
 
@@ -58,18 +59,13 @@ public class PlanDto {
     }
 
     public static PlanDto convertToPlanDto(CreatePlanRequest request) {
-        // 세부 일정(Schedule) 변환
         List<ScheduleDto> scheduleDtos = request.getSchedules().stream().map(scheduleRequest -> {
-            // 장소(Place) 변환
             List<PlaceDto> placeDtos = scheduleRequest.getPlaces().stream().map(placeRequest -> {
-                // 장소 세부정보(PlaceDetails) 변환
-                List<PlaceDetailsDto> placeDetailsDtos = placeRequest.getPlaceDetails().stream().map(detailsRequest ->
-                        new PlaceDetailsDto(
-                                detailsRequest.getMemo(),
-                                detailsRequest.getCost(),
-                                detailsRequest.getVisitTime()
-                        )
-                ).collect(Collectors.toList());
+                PlaceDetailsDto placeDetailsDto = new PlaceDetailsDto(
+                        placeRequest.getPlaceDetails().getMemo(),
+                        placeRequest.getPlaceDetails().getCost(),
+                        placeRequest.getPlaceDetails().getVisitTime()
+                );
 
                 return new PlaceDto(
                         placeRequest.getKakaoPlaceId(),
@@ -77,14 +73,11 @@ public class PlanDto {
                         placeRequest.getLatitude(),
                         placeRequest.getLongitude(),
                         placeRequest.getAddress(),
-                        placeDetailsDtos
+                        placeDetailsDto
                 );
             }).collect(Collectors.toList());
 
-            return new ScheduleDto(
-                    scheduleRequest.getDay(),
-                    placeDtos
-            );
+            return new ScheduleDto(scheduleRequest.getDay(), placeDtos);
         }).collect(Collectors.toList());
 
         return new PlanDto(
