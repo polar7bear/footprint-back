@@ -8,10 +8,10 @@ import lombok.Builder;
 @Builder
 public record ImageDto(
 
-        @Schema(name = "이미지 ID", example = "1", required = true)
+        @Schema(name = "imageId", example = "1", required = true)
         Long imageId,
 
-        @Schema(name = "이미지 URL", example = "https://dfbf-footprint.s3.ap-northeast-2.amazonaws.com/472684f1-3618-47ae-8cc4-493179ae85a8_1.jpg")
+        @Schema(name = "imageUrl", example = "https://dfbf-footprint.s3.ap-northeast-2.amazonaws.com/472684f1-3618-47ae-8cc4-493179ae85a8_1.jpg")
         String imageUrl
 ) {
     public static ImageDto of(Image image){
