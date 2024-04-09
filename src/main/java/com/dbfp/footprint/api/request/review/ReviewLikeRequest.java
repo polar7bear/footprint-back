@@ -1,4 +1,4 @@
-package com.dbfp.footprint.dto.review;
+package com.dbfp.footprint.api.request.review;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AccessLevel;
@@ -7,14 +7,14 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class ReviewLikeDto {
+public class ReviewLikeRequest {
     @Schema(name = "리뷰 ID", example = "1")
     private Long reviewId;
 
     @Schema(name = "작성자 ID", example = "1")
     private Long memberId;
 
-    public ReviewLikeDto(Long reviewId, Long memberId) {
+    public ReviewLikeRequest(Long reviewId, Long memberId) {
         this.reviewId = reviewId;
         this.memberId = memberId;
     }

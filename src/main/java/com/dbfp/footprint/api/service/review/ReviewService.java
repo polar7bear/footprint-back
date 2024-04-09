@@ -11,7 +11,7 @@ import com.dbfp.footprint.domain.review.Image;
 import com.dbfp.footprint.domain.review.Review;
 import com.dbfp.footprint.domain.review.ReviewLike;
 import com.dbfp.footprint.dto.review.ReviewDto;
-import com.dbfp.footprint.dto.review.ReviewLikeDto;
+import com.dbfp.footprint.api.request.review.ReviewLikeRequest;
 import com.dbfp.footprint.dto.review.ReviewListDto;
 import com.dbfp.footprint.exception.member.NotFoundMemberException;
 import com.dbfp.footprint.exception.review.NotFoundImageException;
@@ -156,10 +156,10 @@ public class ReviewService {
 
     //리뷰 좋아요 추가
     @Transactional
-    public void addLikes(ReviewLikeDto reviewLikeDto) {
-        Member member = memberRepository.findById(reviewLikeDto.getMemberId())
+    public void addLikes(ReviewLikeRequest reviewLikeRequest) {
+        Member member = memberRepository.findById(reviewLikeRequest.getMemberId())
                 .orElseThrow(NotFoundMemberException::new);
-        Review review = reviewRepository.findById(reviewLikeDto.getReviewId()).orElseThrow(NotFoundReviewException::new);
+        Review review = reviewRepository.findById(reviewLikeRequest.getReviewId()).orElseThrow(NotFoundReviewException::new);
 
         if (reviewLikeRepository.existsByMemberAndReview(member, review)) {
             throw new IllegalArgumentException();
@@ -171,10 +171,10 @@ public class ReviewService {
 
     //리뷰 좋아요 취소
     @Transactional
-    public void subLikes(ReviewLikeDto reviewLikeDto) {
-        Member member = memberRepository.findById(reviewLikeDto.getMemberId())
+    public void subLikes(ReviewLikeRequest reviewLikeRequest) {
+        Member member = memberRepository.findById(reviewLikeRequest.getMemberId())
                 .orElseThrow(NotFoundMemberException::new);
-        Review review = reviewRepository.findById(reviewLikeDto.getReviewId()).orElseThrow(NotFoundReviewException::new);
+        Review review = reviewRepository.findById(reviewLikeRequest.getReviewId()).orElseThrow(NotFoundReviewException::new);
 
         if (!reviewLikeRepository.existsByMemberAndReview(member, review)) {
             throw new IllegalArgumentException();
