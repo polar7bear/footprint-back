@@ -3,7 +3,7 @@ WORKDIR /app
 
 COPY . .
 
-CMD ["./gradlew", "build"]
+CMD ["./gradlew", "clean", "build"]
 
 COPY build/libs/app.jar app.jar
 ENTRYPOINT ["java", "-jar", "app.jar"]
