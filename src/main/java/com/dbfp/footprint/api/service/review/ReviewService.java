@@ -123,6 +123,8 @@ public class ReviewService {
                     review.getId(),
                     review.getMember().getId(),
                     review.getTitle(),
+                    review.getCreatedAt(),
+                    review.getLikes(),
                     null
             );
         } else {
@@ -130,6 +132,8 @@ public class ReviewService {
                     review.getId(),
                     review.getMember().getId(),
                     review.getTitle(),
+                    review.getCreatedAt(),
+                    review.getLikes(),
                     review.getImages().get(0).getImageUrl()
             );
         }
@@ -142,6 +146,8 @@ public class ReviewService {
                     review.getId(),
                     review.getMember().getId(),
                     review.getTitle(),
+                    review.getCreatedAt(),
+                    review.getLikes(),
                     null
             );
         } else {
@@ -149,6 +155,8 @@ public class ReviewService {
                     review.getId(),
                     review.getMember().getId(),
                     review.getTitle(),
+                    review.getCreatedAt(),
+                    review.getLikes(),
                     review.getImages().get(0).getImageUrl()
             );
         }
