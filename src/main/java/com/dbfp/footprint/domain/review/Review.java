@@ -10,6 +10,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,6 +35,9 @@ public class Review {
 
     private Integer likes;
 
+    @Temporal(TemporalType.TIMESTAMP)
+    private LocalDateTime createdAt;
+
     @OneToMany(mappedBy = "review")
     private List<Image> images;
 
@@ -46,6 +51,7 @@ public class Review {
         this.content = content;
         this.member = member;
         this.images = images;
+        this.createdAt = LocalDateTime.now();
         this.likes = 0;
     }
 
@@ -62,6 +68,7 @@ public class Review {
         this.title = reviewReqDto.getTitle();
         this.content = reviewReqDto.getContent();
         this.images = images;
+        this.createdAt = LocalDateTime.now();
     }
 
     public void addLikes(Member member) {

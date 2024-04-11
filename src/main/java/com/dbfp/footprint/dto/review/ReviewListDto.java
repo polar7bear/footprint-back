@@ -5,6 +5,9 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ReviewListDto {
@@ -17,13 +20,23 @@ public class ReviewListDto {
     @Schema(name = "title", example = "부산 1박 2일 여행")
     private String title;
 
+    @Schema(name = "createdAt", example = "2024-04-11T17:18:53.457879")
+    private LocalDateTime createdAt;
+
+    @Schema(name = "좋아요 개수", example = "1")
+    private Integer likes;
+
+
     @Schema(name = "previewImageUrl", example = "https://dfbf-footprint.s3.ap-northeast-2.amazonaws.com/472684f1-3618-47ae-8cc4-493179ae85a8_1.jpg")
     private String previewImageUrl;
 
-    public ReviewListDto(Long reviewId, Long memberId, String title, String previewImageUrl) {
+    public ReviewListDto(Long reviewId, Long memberId, String title,
+                         LocalDateTime createdAt, Integer likes, String previewImageUrl) {
         this.memberId = memberId;
         this.reviewId = reviewId;
         this.title = title;
+        this.createdAt = createdAt;
+        this.likes = likes;
         this.previewImageUrl = previewImageUrl;
     }
 }
