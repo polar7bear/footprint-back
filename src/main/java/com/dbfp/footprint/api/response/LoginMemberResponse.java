@@ -1,12 +1,14 @@
 package com.dbfp.footprint.api.response;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
-public class CreateMemberResponse {
+@AllArgsConstructor
+public class LoginMemberResponse {
 
-    private Long id;
     private String email;
-    private String token;
+    private String accessToken;
+    private String refreshToken;
 
 }
