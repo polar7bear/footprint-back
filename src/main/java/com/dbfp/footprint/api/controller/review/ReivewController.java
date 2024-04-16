@@ -4,9 +4,10 @@ import com.dbfp.footprint.api.request.review.CreateReviewRequest;
 import com.dbfp.footprint.api.request.review.UpdateReviewRequest;
 import com.dbfp.footprint.api.service.review.ReviewService;
 import com.dbfp.footprint.dto.review.ReviewDto;
-import com.dbfp.footprint.dto.review.ReviewLikeDto;
+import com.dbfp.footprint.api.request.review.ReviewLikeRequest;
 import com.dbfp.footprint.dto.review.ReviewListDto;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -62,9 +63,9 @@ public class ReivewController {
             @ApiResponse(responseCode = "400", description = "잘못된 요청 값"),
             @ApiResponse(responseCode = "401", description = "헤더 없음 or 토큰 불일치", content = @Content(schema = @Schema(example = "INVALID_HEADER or INVALID_TOKEN")))
     })
-    public ResponseEntity<Page<ReviewListDto>> findMyReviews(@RequestParam(value = "memberId") Long memberId,
-                                                             @RequestParam(value = "page", defaultValue = "0") int page,
-                                                             @RequestParam(value = "size", defaultValue = "8") int size){
+    public ResponseEntity<Page<ReviewListDto>> findMyReviews(@Parameter(description = "멤버 ID", example = "1") @RequestParam(value = "memberId") Long memberId,
+                                                             @Parameter(description = "페이지 번호 (0부터 시작)", example = "0") @RequestParam(value = "page", defaultValue = "0") int page,
+                                                             @Parameter(description = "페이지 당 항목 수", example = "10") @RequestParam(value = "size", defaultValue = "8") int size){
         Page<ReviewListDto> myReviews = reviewService.findAllMyReviewPage(memberId, page, size);
         return new ResponseEntity<>(myReviews, HttpStatus.OK);
     }
@@ -76,9 +77,9 @@ public class ReivewController {
             @ApiResponse(responseCode = "400", description = "잘못된 요청 값"),
             @ApiResponse(responseCode = "401", description = "헤더 없음 or 토큰 불일치", content = @Content(schema = @Schema(example = "INVALID_HEADER or INVALID_TOKEN")))
     })
-    public ResponseEntity<Page<ReviewListDto>> findReviews(@RequestParam(value = "sort", defaultValue = "id") String sort,
-                                                           @RequestParam(value = "page", defaultValue = "0") int page,
-                                                           @RequestParam(value = "size", defaultValue = "8") int size){
+    public ResponseEntity<Page<ReviewListDto>> findReviews(@Parameter(description = "정렬 기준 (최신순-id, 좋아요순-like)", example = "id") @RequestParam(value = "sort", defaultValue = "id") String sort,
+                                                           @Parameter(description = "페이지 번호 (0부터 시작)", example = "0") @RequestParam(value = "page", defaultValue = "0") int page,
+                                                           @Parameter(description = "페이지 당 항목 수", example = "10") @RequestParam(value = "size", defaultValue = "8") int size){
         Page<ReviewListDto> reviews = reviewService.findAllReviewsBySort(sort, page, size);
         return new ResponseEntity<>(reviews, HttpStatus.OK);
     }
@@ -90,9 +91,9 @@ public class ReivewController {
                     @ApiResponse(responseCode = "400", description = "잘못된 요청 값")
             })
     @GetMapping("/search-reviews")
-    public ResponseEntity<Page<ReviewListDto>> searchReviews(@RequestParam(value = "searchKeyword", required = false) String searchKeyword,
-                                                                   @RequestParam(value = "page", defaultValue = "0") int page,
-                                                                   @RequestParam(value = "size", defaultValue = "10") int size) {
+    public ResponseEntity<Page<ReviewListDto>> searchReviews(@Parameter(description = "검색어", example = "부산") @RequestParam(value = "searchKeyword", required = false) String searchKeyword,
+                                                             @Parameter(description = "페이지 번호 (0부터 시작)", example = "0")  @RequestParam(value = "page", defaultValue = "0") int page,
+                                                             @Parameter(description = "페이지 당 항목 수", example = "10") @RequestParam(value = "size", defaultValue = "10") int size) {
         Page<ReviewListDto> searchReviewList;
         if (searchKeyword == null) {
             searchReviewList = reviewService.findAllReviewsBySort("id", page, size);
@@ -112,8 +113,8 @@ public class ReivewController {
             @ApiResponse(responseCode = "401", description = "헤더 없음 or 토큰 불일치", content = @Content(schema = @Schema(example = "INVALID_HEADER or INVALID_TOKEN"))),
             @ApiResponse(responseCode = "500", description = "좋아요가 이미 눌려있습니다")
     })
-    public ResponseEntity<String> addLikes(@RequestBody ReviewLikeDto reviewLikeDto) {
-        reviewService.addLikes(reviewLikeDto);
+    public ResponseEntity<String> addLikes(@RequestBody ReviewLikeRequest reviewLikeRequest) {
+        reviewService.addLikes(reviewLikeRequest);
         return new ResponseEntity<>("SUCCESS", HttpStatus.OK);
     }
 
@@ -126,7 +127,7 @@ public class ReivewController {
             @ApiResponse(responseCode = "401", description = "헤더 없음 or 토큰 불일치", content = @Content(schema = @Schema(example = "INVALID_HEADER or INVALID_TOKEN"))),
             @ApiResponse(responseCode = "500", description = "좋아요가 이미 취소되었습니다")
     })
-    public ResponseEntity<String> subLikes(@RequestBody ReviewLikeDto likeCommentDto) {
+    public ResponseEntity<String> subLikes(@RequestBody ReviewLikeRequest likeCommentDto) {
         reviewService.subLikes(likeCommentDto);
         return new ResponseEntity<>("SUCCESS", HttpStatus.OK);
     }
@@ -138,9 +139,9 @@ public class ReivewController {
             @ApiResponse(responseCode = "400", description = "잘못된 요청 값"),
             @ApiResponse(responseCode = "401", description = "헤더 없음 or 토큰 불일치", content = @Content(schema = @Schema(example = "INVALID_HEADER or INVALID_TOKEN")))
     })
-    public ResponseEntity<Page<ReviewListDto>> findMyLikedReviews(@RequestParam(value = "memberId") Long memberId,
-                                                             @RequestParam(value = "page", defaultValue = "0") int page,
-                                                             @RequestParam(value = "size", defaultValue = "8") int size){
+    public ResponseEntity<Page<ReviewListDto>> findMyLikedReviews(@Parameter(description = "멤버 ID", example = "1")  @RequestParam(value = "memberId") Long memberId,
+                                                                  @Parameter(description = "페이지 번호 (0부터 시작)", example = "0")@RequestParam(value = "page", defaultValue = "0") int page,
+                                                                  @Parameter(description = "페이지 당 항목 수", example = "10")@RequestParam(value = "size", defaultValue = "8") int size){
         Page<ReviewListDto> myReviews = reviewService.findAllMyLikedReviewPage(memberId, page, size);
         return new ResponseEntity<>(myReviews, HttpStatus.OK);
     }
