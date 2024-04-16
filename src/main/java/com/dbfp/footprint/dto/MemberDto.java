@@ -1,12 +1,16 @@
 package com.dbfp.footprint.dto;
 
+import com.dbfp.footprint.domain.Member;
 import jakarta.persistence.Column;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
-@Setter
+@AllArgsConstructor
 public class MemberDto {
+
+    private Long id;
 
     private String nickname;
 
@@ -14,6 +18,15 @@ public class MemberDto {
 
     private String password;
 
-    private String kakaoId;
+    //private String kakaoId;
+
+    public static MemberDto from(Member entity) {
+        return new MemberDto(
+                entity.getId(),
+                entity.getNickname(),
+                entity.getEmail(),
+                entity.getPassword()
+        );
+    }
 
 }

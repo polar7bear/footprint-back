@@ -4,10 +4,7 @@ import com.dbfp.footprint.domain.plan.Plan;
 import com.dbfp.footprint.domain.review.Image;
 import com.dbfp.footprint.dto.MemberDto;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.List;
 
@@ -19,6 +16,7 @@ public class Member {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "member_id")
     private Long id;
 
     @Column(nullable = false, unique = true)
@@ -39,12 +37,13 @@ public class Member {
     @OneToMany(mappedBy = "member")
     private List<Plan> plans;
 
-    public static Member of(MemberDto dto) {
+
+    public static Member of(String nickname, String email, String password) {
         Member member = new Member();
-        member.setNickname(dto.getNickname());
-        member.setEmail(dto.getEmail());
-        member.setPassword(dto.getPassword());
-        member.setKakaoId(dto.getKakaoId());
+        member.setNickname(nickname);
+        member.setEmail(email);
+        member.setPassword(password);
+        //member.setKakaoId(dto.getKakaoId());
 
         return member;
     }
