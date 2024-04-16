@@ -1,5 +1,6 @@
 package com.dbfp.footprint.api.controller.member;
 
+
 import com.dbfp.footprint.api.request.CreateMemberRequest;
 import com.dbfp.footprint.api.request.CreateRefreshTokenRequest;
 import com.dbfp.footprint.api.request.LoginMemberRequest;
@@ -17,9 +18,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api")
+@Tag(name = "Member", description = "Member API")
 public class MemberController {
 
     private final MemberService memberService;

@@ -2,6 +2,7 @@ package com.dbfp.footprint.api.service.member;
 
 import com.dbfp.footprint.api.repository.RefreshTokenRepository;
 import com.dbfp.footprint.api.repository.member.MemberRepository;
+
 import com.dbfp.footprint.api.request.CreateRefreshTokenRequest;
 import com.dbfp.footprint.api.response.CreateMemberResponse;
 import com.dbfp.footprint.api.response.LoginMemberResponse;
@@ -91,5 +92,11 @@ public class MemberService {
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "리프레쉬 토큰 생성 실패", e);
         }
+    }
+
+    public Long createMember(CreateMemberRequest createMemberRequest) {
+        Member member = Member.of(createMemberRequest);
+        memberRepository.save(member);
+        return member.getId();
     }
 }
