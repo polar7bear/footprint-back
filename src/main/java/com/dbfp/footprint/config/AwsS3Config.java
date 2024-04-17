@@ -1,5 +1,6 @@
 package com.dbfp.footprint.config;
 
+import com.amazonaws.ClientConfiguration;
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
@@ -21,8 +22,12 @@ public class AwsS3Config {
 
     @Bean
     public AmazonS3 s3Client() {
+        ClientConfiguration clientConfiguration = new ClientConfiguration();
+        clientConfiguration.setProxyHost("krmp-proxy.9rum.cc");
+        clientConfiguration.setProxyPort(3128);
         AWSCredentials credentials = new BasicAWSCredentials(accessKey, accessSecret);
         return AmazonS3ClientBuilder.standard()
+                .withClientConfiguration(clientConfiguration)
                 .withCredentials(new AWSStaticCredentialsProvider(credentials))
                 .withRegion(region).build();
     }
