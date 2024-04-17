@@ -44,6 +44,7 @@ public class Member {
         member.setEmail(email);
         member.setPassword(password);
         //member.setKakaoId(dto.getKakaoId());
+        return member;
     }
 
 

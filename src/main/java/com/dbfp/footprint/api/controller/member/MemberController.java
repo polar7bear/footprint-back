@@ -1,13 +1,14 @@
 package com.dbfp.footprint.api.controller.member;
 
 
-import com.dbfp.footprint.api.request.CreateMemberRequest;
+import com.dbfp.footprint.api.request.member.CreateMemberRequest;
 import com.dbfp.footprint.api.request.CreateRefreshTokenRequest;
 import com.dbfp.footprint.api.request.LoginMemberRequest;
 import com.dbfp.footprint.api.response.CreateMemberResponse;
 import com.dbfp.footprint.api.response.LoginMemberResponse;
 import com.dbfp.footprint.api.service.member.MemberService;
 import com.dbfp.footprint.config.jwt.JwtFilter;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;

@@ -94,9 +94,4 @@ public class MemberService {
         }
     }
 
-    public Long createMember(CreateMemberRequest createMemberRequest) {
-        Member member = Member.of(createMemberRequest);
-        memberRepository.save(member);
-        return member.getId();
-    }
 }
