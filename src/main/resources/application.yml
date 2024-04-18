@@ -57,3 +57,10 @@ jwt:
   #dogfootbirdfootprintdogfootbirdfootprintdogfootbirdfootprintdogfootbirdfootprintdogfootbirdfootprint
   secret: ZG9nZm9vdGJpcmRmb290cHJpbnRkb2dmb290YmlyZGZvb3RwcmludGRvZ2Zvb3RiaXJkZm9vdHByaW50ZG9nZm9vdGJpcmRmb290cHJpbnRkb2dmb290YmlyZGZvb3RwcmludA==
   token-validity-in-seconds: 86400
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "prometheus"
+      base-path:  "/api/actuator"
