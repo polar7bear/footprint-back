@@ -41,16 +41,18 @@ public class ReviewService {
     }
 
     //리뷰 작성
+    @Transactional
     public Long create(CreateReviewRequest reviewReqDto){
         Member member = memberRepository.findById(reviewReqDto.getMemberId()).orElseThrow(NotFoundMemberException::new);
 
-        List<Image> images = new ArrayList<>();
+        Review review = Review.of(reviewReqDto, member);
+
         for (Long imageId : reviewReqDto.getImageIds()) {
             Image image = imageRepository.findById(imageId).orElseThrow(NotFoundImageException::new);
-            images.add(image);
+            image.setReview(review);
+            review.addImage(image);
         }
-
-        Review review = Review.of(reviewReqDto, member, images);
+        System.out.println("++++++++리뷰안에 이미지 없는가++++++++++++"+review.getImages().size());
         reviewRepository.save(review);
         return review.getId();
     }
@@ -60,7 +62,10 @@ public class ReviewService {
     public ReviewDto findById(Long reviewId){
         Review review = reviewRepository.findByIdAndVisible(reviewId, true);
         List<String> images = new ArrayList<>();
+        System.out.println("||||||||리뷰에이미지있는가||||||||||||||||||"+review.getImages().size());
         for (Image image : review.getImages()) {
+            System.out.println("----------------------이미지ID---------------------------"+image.getId());
+            System.out.println("----------------------이미지URL---------------------------"+image.getImageUrl());
             String imageUrl = image.getImageUrl();
             images.add(imageUrl);
         }

@@ -42,8 +42,8 @@ public class Review {
     @Temporal(TemporalType.TIMESTAMP)
     private LocalDateTime createdAt;
 
-    @OneToMany(mappedBy = "review")
-    private List<Image> images;
+    @OneToMany(mappedBy = "review", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Image> images = new ArrayList<>();
 
     @OneToMany(mappedBy = "review", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ReviewLike> reviewLikes = new ArrayList<>();
@@ -51,25 +51,23 @@ public class Review {
     @Builder
     private Review(String title, String content,
                   Member member, boolean visible,
-                   String region, List<Image> images) {
+                   String region){
         this.title = title;
         this.content = content;
         this.member = member;
-        this.images = images;
         this.region = region;
         this.visible = visible;
         this.createdAt = LocalDateTime.now();
         this.likes = 0;
     }
 
-    public static Review of(CreateReviewRequest reviewReqDto, Member member, List<Image> images) {
+    public static Review of(CreateReviewRequest reviewReqDto, Member member){
         return Review.builder()
                 .title(reviewReqDto.getTitle())
                 .content(reviewReqDto.getContent())
                 .member(member)
                 .visible(reviewReqDto.isVisible())
                 .region(reviewReqDto.getRegion())
-                .images(images)
                 .build();
     }
 
@@ -101,5 +99,9 @@ public class Review {
                 .filter(reviewLike -> reviewLike.getMember().equals(member))
                 .findFirst()
                 .orElse(null);
+    }
+
+    public void addImage(Image image){
+        this.images.add(image);
     }
 }
