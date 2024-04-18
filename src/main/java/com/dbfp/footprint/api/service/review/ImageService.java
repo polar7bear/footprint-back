@@ -51,6 +51,11 @@ public class ImageService {
         }
     }
 
+    public String getImageUrl(Long imageId) {
+        Image image = imageRepository.findById(imageId).orElseThrow(NotFoundImageException::new);
+        return image.getImageUrl();
+    }
+
     @Transactional
     public void containingImageDelete(MultipartFile multipartFile) {
         Image containingImage = imageRepository.findImageByConvertImageNameContaining(
