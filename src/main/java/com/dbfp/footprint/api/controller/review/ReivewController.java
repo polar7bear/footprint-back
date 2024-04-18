@@ -49,7 +49,8 @@ public class ReivewController {
     @Operation(summary = "리뷰 상세조회", description = "하나의 리뷰에 대해 상세 정보를 조회할 때 쓰는 API")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "400", description = "잘못된 요청 값"),
-            @ApiResponse(responseCode = "401", description = "헤더 없음 or 토큰 불일치", content = @Content(schema = @Schema(example = "INVALID_HEADER or INVALID_TOKEN")))
+            @ApiResponse(responseCode = "401", description = "헤더 없음 or 토큰 불일치", content = @Content(schema = @Schema(example = "INVALID_HEADER or INVALID_TOKEN"))),
+            @ApiResponse(responseCode = "500", description = "비공개 리뷰")
     })
     public ResponseEntity<ReviewDto> findReview(@PathVariable(name = "reviewId") Long reviewId){
         ReviewDto reviewDto = reviewService.findById(reviewId);

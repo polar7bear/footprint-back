@@ -14,5 +14,9 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
     Page<Review> findAllByMember(Member member, PageRequest pageRequest);
 
     // 리뷰 검색기능 (findBy(컬럼이름)Containing -> 컬럼에서 키워드가 포함된 것을 찾겠다. 글자 한 글자만 검색해도 그 글자가 포함된 것은 다 나옴)
-    Page<Review> findByTitleContainingOrContentContaining(String searchKeyword1, String searchKeyword2, PageRequest pageRequest);
+    Page<Review> findByVisibleAndTitleContainingOrContentContaining(boolean visible, String searchKeyword1, String searchKeyword2, PageRequest pageRequest);
+
+    Page<Review> findAllByVisible(boolean visible, PageRequest pageRequest);
+
+    Review findByIdAndVisible(Long Id, boolean visible);
 }

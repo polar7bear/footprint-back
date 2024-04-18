@@ -26,4 +26,12 @@ public class ImageController {
 
         return new ResponseEntity<>(upload, HttpStatus.OK);
     }
+
+    @PostMapping(value = "/image-url/{imageId}")
+    @Operation(summary = "이미지 URL 조회 API", description = "이미지 ID로 이미지 URL을 조회하는 API")
+    public ResponseEntity<String> imageUpload(@PathVariable(name = "imageId") Long imageId) {
+        String imageURL = imageService.getImageUrl(imageId);
+
+        return new ResponseEntity<>(imageURL, HttpStatus.OK);
+    }
 }

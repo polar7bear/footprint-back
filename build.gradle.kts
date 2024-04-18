@@ -20,7 +20,7 @@ repositories {
 
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-web")
-//    implementation("org.springframework.boot:spring-boot-starter-security")
+    implementation("org.springframework.boot:spring-boot-starter-security")
 
     //jpa
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
@@ -58,6 +58,10 @@ dependencies {
 
     //S3
     implementation("org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE")
+
+    // actuator
+    implementation("org.springframework.boot:spring-boot-starter-actuator")
+    implementation("io.micrometer:micrometer-registry-prometheus")
 
 
 //    implementation("org.springframework.boot:spring-boot-starter-validation")

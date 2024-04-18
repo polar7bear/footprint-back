@@ -17,6 +17,7 @@ public class Member {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "member_id")
     private Long id;
 
     @Column(nullable = false, unique = true)
@@ -37,14 +38,15 @@ public class Member {
     @OneToMany(mappedBy = "member")
     private List<Plan> plans;
 
-    public static Member of(CreateMemberRequest dto) {
-        return Member.builder()
-                .nickname(dto.getNickname())
-                .email(dto.getEmail())
-                .kakaoId(dto.getKakaoId())
-                .password(dto.getPassword())
-                .build();
+    public static Member of(String nickname, String email, String password) {
+        Member member = new Member();
+        member.setNickname(nickname);
+        member.setEmail(email);
+        member.setPassword(password);
+        //member.setKakaoId(dto.getKakaoId());
+        return member;
     }
+
 
     //프사설정 추가해야함, null일때 기본이미지도 추가해야함
     @Builder

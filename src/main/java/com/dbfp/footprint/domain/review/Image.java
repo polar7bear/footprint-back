@@ -33,4 +33,8 @@ public class Image {
         this.imageUrl = imageUrl;
         this.convertImageName = convertImageName;
     }
+
+    public void setReview(Review review){
+        this.review = review;
+    }
 }
