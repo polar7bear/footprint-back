@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Configuration;
 
 @OpenAPIDefinition(
         servers = {
-                @Server(url = "https://k903c4c87638da.user-app.krampoline.com/", description = "prod"),
+                @Server(url = "https://ke4f765103c24a.user-app.krampoline.com/", description = "prod"),
                 @Server(url = "http://localhost:8080", description = "local")
         }
 )
