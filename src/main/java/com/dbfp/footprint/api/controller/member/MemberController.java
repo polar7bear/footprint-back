@@ -1,6 +1,7 @@
 package com.dbfp.footprint.api.controller.member;
 
 
+import com.amazonaws.Response;
 import com.dbfp.footprint.api.request.member.CreateMemberRequest;
 import com.dbfp.footprint.api.request.CreateRefreshTokenRequest;
 import com.dbfp.footprint.api.request.LoginMemberRequest;
@@ -51,6 +52,17 @@ public class MemberController {
             return new ResponseEntity<>(response, HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout(@RequestBody CreateRefreshTokenRequest request) {
+        boolean deleted = memberService.deleteByToken(request.getRefreshToken());
+
+        if (deleted) {
+            return ResponseEntity.ok().build();
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Refresh Token -> 존재하지 않는 토큰이거나 만료된 토큰입니다.");
         }
     }
 }
