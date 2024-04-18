@@ -14,6 +14,9 @@ public class CreateReviewRequest {
     @Schema(name = "memberId", example = "1")
     private Long memberId;
 
+    @Schema(name = "planId", example = "1")
+    private Long planId;
+
     @Schema(name = "title", example = "부산 여행 후기")
     private String title;
 
@@ -31,10 +34,11 @@ public class CreateReviewRequest {
             +" ]")
     private List<Long> imageIds;
 
-    public CreateReviewRequest(Long memberId, String title,
+    public CreateReviewRequest(Long memberId, Long planId, String title,
                                String content, boolean visible,
                                String region, List<Long> imageIds){
         this.memberId = memberId;
+        this.planId = planId;
         this.title = title;
         this.content = content;
         this.visible = visible;

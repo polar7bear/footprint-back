@@ -3,6 +3,8 @@ package com.dbfp.footprint.domain.review;
 import com.dbfp.footprint.api.request.review.CreateReviewRequest;
 import com.dbfp.footprint.api.request.review.UpdateReviewRequest;
 import com.dbfp.footprint.domain.Member;
+import com.dbfp.footprint.domain.plan.Plan;
+import com.dbfp.footprint.domain.plan.Schedule;
 import com.dbfp.footprint.exception.review.NotFoundImageException;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -29,6 +31,10 @@ public class Review {
     @JoinColumn(nullable = false, name = "member_id")
     private Member member;
 
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(nullable = true, name = "plan_id")
+    private Plan plan;
+
     private String title;
 
     private String content;
@@ -45,27 +51,32 @@ public class Review {
     @OneToMany(mappedBy = "review", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Image> images = new ArrayList<>();
 
+    @OneToMany(mappedBy = "plan", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Schedule> schedules = new ArrayList<>();
+
     @OneToMany(mappedBy = "review", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ReviewLike> reviewLikes = new ArrayList<>();
 
     @Builder
     private Review(String title, String content,
                   Member member, boolean visible,
-                   String region){
+                   String region, Plan plan){
         this.title = title;
         this.content = content;
         this.member = member;
+        this.plan = plan;
         this.region = region;
         this.visible = visible;
         this.createdAt = LocalDateTime.now();
         this.likes = 0;
     }
 
-    public static Review of(CreateReviewRequest reviewReqDto, Member member){
+    public static Review of(CreateReviewRequest reviewReqDto, Member member, Plan plan){
         return Review.builder()
                 .title(reviewReqDto.getTitle())
                 .content(reviewReqDto.getContent())
                 .member(member)
+                .plan(plan)
                 .visible(reviewReqDto.isVisible())
                 .region(reviewReqDto.getRegion())
                 .build();

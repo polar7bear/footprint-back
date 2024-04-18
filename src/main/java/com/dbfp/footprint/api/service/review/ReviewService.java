@@ -1,5 +1,6 @@
 package com.dbfp.footprint.api.service.review;
 
+import com.dbfp.footprint.api.repository.plan.PlanRepository;
 import com.dbfp.footprint.api.repository.review.ImageRepository;
 import com.dbfp.footprint.api.repository.member.MemberRepository;
 import com.dbfp.footprint.api.repository.review.ReviewLikeRepository;
@@ -7,6 +8,7 @@ import com.dbfp.footprint.api.repository.review.ReviewRepository;
 import com.dbfp.footprint.api.request.review.CreateReviewRequest;
 import com.dbfp.footprint.api.request.review.UpdateReviewRequest;
 import com.dbfp.footprint.domain.Member;
+import com.dbfp.footprint.domain.plan.Plan;
 import com.dbfp.footprint.domain.review.Image;
 import com.dbfp.footprint.domain.review.Review;
 import com.dbfp.footprint.domain.review.ReviewLike;
@@ -14,6 +16,7 @@ import com.dbfp.footprint.dto.review.ReviewDto;
 import com.dbfp.footprint.api.request.review.ReviewLikeRequest;
 import com.dbfp.footprint.dto.review.ReviewListDto;
 import com.dbfp.footprint.exception.member.NotFoundMemberException;
+import com.dbfp.footprint.exception.plan.PlanNotFoundException;
 import com.dbfp.footprint.exception.review.NotFoundImageException;
 import com.dbfp.footprint.exception.review.NotFoundReviewException;
 import org.springframework.data.domain.Page;
@@ -31,10 +34,13 @@ public class ReviewService {
     private final ImageRepository imageRepository;
     private final ReviewRepository reviewRepository;
     private final ReviewLikeRepository reviewLikeRepository;
+    private final PlanRepository planRepository;
 
     public ReviewService(MemberRepository memberRepository, ImageRepository imageRepository,
-                         ReviewRepository reviewRepository, ReviewLikeRepository reviewLikeRepository){
+                         ReviewRepository reviewRepository, ReviewLikeRepository reviewLikeRepository,
+                         PlanRepository planRepository){
         this.memberRepository = memberRepository;
+        this.planRepository = planRepository;
         this.imageRepository = imageRepository;
         this.reviewRepository = reviewRepository;
         this.reviewLikeRepository = reviewLikeRepository;
@@ -44,15 +50,14 @@ public class ReviewService {
     @Transactional
     public Long create(CreateReviewRequest reviewReqDto){
         Member member = memberRepository.findById(reviewReqDto.getMemberId()).orElseThrow(NotFoundMemberException::new);
-
-        Review review = Review.of(reviewReqDto, member);
+        Plan plan = planRepository.findById(reviewReqDto.getPlanId()).orElseThrow(PlanNotFoundException::new);
+        Review review = Review.of(reviewReqDto, member, plan);
 
         for (Long imageId : reviewReqDto.getImageIds()) {
             Image image = imageRepository.findById(imageId).orElseThrow(NotFoundImageException::new);
             image.setReview(review);
             review.addImage(image);
         }
-        System.out.println("++++++++리뷰안에 이미지 없는가++++++++++++"+review.getImages().size());
         reviewRepository.save(review);
         return review.getId();
     }
@@ -62,10 +67,7 @@ public class ReviewService {
     public ReviewDto findById(Long reviewId){
         Review review = reviewRepository.findByIdAndVisible(reviewId, true);
         List<String> images = new ArrayList<>();
-        System.out.println("||||||||리뷰에이미지있는가||||||||||||||||||"+review.getImages().size());
         for (Image image : review.getImages()) {
-            System.out.println("----------------------이미지ID---------------------------"+image.getId());
-            System.out.println("----------------------이미지URL---------------------------"+image.getImageUrl());
             String imageUrl = image.getImageUrl();
             images.add(imageUrl);
         }
