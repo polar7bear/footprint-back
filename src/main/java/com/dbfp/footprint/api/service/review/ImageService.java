@@ -4,6 +4,7 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.amazonaws.services.s3.model.S3Object;
 import com.dbfp.footprint.domain.review.Image;
 import com.dbfp.footprint.dto.review.ImageDto;
 import com.dbfp.footprint.exception.review.NotFoundImageException;

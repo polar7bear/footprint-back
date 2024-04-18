@@ -4,8 +4,6 @@ import com.dbfp.footprint.api.request.review.CreateReviewRequest;
 import com.dbfp.footprint.api.request.review.UpdateReviewRequest;
 import com.dbfp.footprint.domain.Member;
 import com.dbfp.footprint.domain.plan.Plan;
-import com.dbfp.footprint.domain.plan.Schedule;
-import com.dbfp.footprint.exception.review.NotFoundImageException;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -50,9 +48,6 @@ public class Review {
 
     @OneToMany(mappedBy = "review", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Image> images = new ArrayList<>();
-
-    @OneToMany(mappedBy = "plan", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Schedule> schedules = new ArrayList<>();
 
     @OneToMany(mappedBy = "review", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ReviewLike> reviewLikes = new ArrayList<>();
