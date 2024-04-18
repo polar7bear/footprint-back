@@ -1,5 +1,6 @@
 package com.dbfp.footprint.api.service.review;
 
+import com.dbfp.footprint.api.repository.plan.PlanRepository;
 import com.dbfp.footprint.api.repository.review.ImageRepository;
 import com.dbfp.footprint.api.repository.member.MemberRepository;
 import com.dbfp.footprint.api.repository.review.ReviewLikeRepository;
@@ -7,6 +8,7 @@ import com.dbfp.footprint.api.repository.review.ReviewRepository;
 import com.dbfp.footprint.api.request.review.CreateReviewRequest;
 import com.dbfp.footprint.api.request.review.UpdateReviewRequest;
 import com.dbfp.footprint.domain.Member;
+import com.dbfp.footprint.domain.plan.Plan;
 import com.dbfp.footprint.domain.review.Image;
 import com.dbfp.footprint.domain.review.Review;
 import com.dbfp.footprint.domain.review.ReviewLike;
@@ -14,6 +16,7 @@ import com.dbfp.footprint.dto.review.ReviewDto;
 import com.dbfp.footprint.api.request.review.ReviewLikeRequest;
 import com.dbfp.footprint.dto.review.ReviewListDto;
 import com.dbfp.footprint.exception.member.NotFoundMemberException;
+import com.dbfp.footprint.exception.plan.PlanNotFoundException;
 import com.dbfp.footprint.exception.review.NotFoundImageException;
 import com.dbfp.footprint.exception.review.NotFoundReviewException;
 import org.springframework.data.domain.Page;
@@ -31,25 +34,30 @@ public class ReviewService {
     private final ImageRepository imageRepository;
     private final ReviewRepository reviewRepository;
     private final ReviewLikeRepository reviewLikeRepository;
+    private final PlanRepository planRepository;
 
     public ReviewService(MemberRepository memberRepository, ImageRepository imageRepository,
-                         ReviewRepository reviewRepository, ReviewLikeRepository reviewLikeRepository){
+                         ReviewRepository reviewRepository, ReviewLikeRepository reviewLikeRepository,
+                         PlanRepository planRepository){
         this.memberRepository = memberRepository;
+        this.planRepository = planRepository;
         this.imageRepository = imageRepository;
         this.reviewRepository = reviewRepository;
         this.reviewLikeRepository = reviewLikeRepository;
     }
 
     //리뷰 작성
+    @Transactional
     public Long create(CreateReviewRequest reviewReqDto){
         Member member = memberRepository.findById(reviewReqDto.getMemberId()).orElseThrow(NotFoundMemberException::new);
-        List<Image> images = new ArrayList<>();
+        Plan plan = planRepository.findById(reviewReqDto.getPlanId()).orElseThrow(PlanNotFoundException::new);
+        Review review = Review.of(reviewReqDto, member, plan);
+
         for (Long imageId : reviewReqDto.getImageIds()) {
             Image image = imageRepository.findById(imageId).orElseThrow(NotFoundImageException::new);
-            images.add(image);
+            image.setReview(review);
+            review.addImage(image);
         }
-
-        Review review = Review.of(reviewReqDto, member, images);
         reviewRepository.save(review);
         return review.getId();
     }
@@ -57,7 +65,7 @@ public class ReviewService {
     //리뷰 상세 조회
     @Transactional
     public ReviewDto findById(Long reviewId){
-        Review review = reviewRepository.findById(reviewId).orElseThrow(NotFoundReviewException::new);
+        Review review = reviewRepository.findByIdAndVisible(reviewId, true);
         List<String> images = new ArrayList<>();
         for (Image image : review.getImages()) {
             String imageUrl = image.getImageUrl();
@@ -94,14 +102,14 @@ public class ReviewService {
     public Page<ReviewListDto> findAllReviewsBySort(String sort, int page, int size) {
         Page<Review> reviewsListPage;
         if (sort.equals("id")){
-            reviewsListPage = reviewRepository.findAll(
-                    PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, "Id")));
+            reviewsListPage = reviewRepository.findAllByVisible(true,
+                    PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "Id")));
         }else if (sort.equals("likes")){
-            reviewsListPage = reviewRepository.findAll(
+            reviewsListPage = reviewRepository.findAllByVisible(true,
                     PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "likes")));
         }else{
-            reviewsListPage = reviewRepository.findAll(
-                    PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, "Id")));
+            reviewsListPage = reviewRepository.findAllByVisible(true,
+                    PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "Id")));
         }
 
 
@@ -111,7 +119,7 @@ public class ReviewService {
     //리뷰 검색
     @Transactional
     public Page<ReviewListDto> searchReviews(String searchKeyword, int page, int size) {
-        Page<Review> noticeSearchPage = reviewRepository.findByTitleContainingOrContentContaining(
+        Page<Review> noticeSearchPage = reviewRepository.findByVisibleAndTitleContainingOrContentContaining(true,
                 searchKeyword.trim(), searchKeyword.trim(), PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, "Id")));
 
         return noticeSearchPage.map(this::reviewListMap);
