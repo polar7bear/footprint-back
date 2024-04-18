@@ -20,16 +20,25 @@ public class CreateReviewRequest {
     @Schema(name = "content", example = "코레일 내일로를 이용한 부산 1박2일 여행")
     private String content;
 
+    @Schema(name = "region", example = "부산")
+    private String region;
+
+    @Schema(name = "visible", example = "true")
+    private boolean visible;
+
     @Schema(name = "imageIds", example = "[ " +
             "1"
             +" ]")
     private List<Long> imageIds;
 
     public CreateReviewRequest(Long memberId, String title,
-                               String content, List<Long> imageIds){
+                               String content, boolean visible,
+                               String region, List<Long> imageIds){
         this.memberId = memberId;
         this.title = title;
         this.content = content;
+        this.visible = visible;
+        this.region = region;
         this.imageIds = imageIds;
     }
 }

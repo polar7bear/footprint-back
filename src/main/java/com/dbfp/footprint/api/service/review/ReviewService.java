@@ -43,6 +43,7 @@ public class ReviewService {
     //리뷰 작성
     public Long create(CreateReviewRequest reviewReqDto){
         Member member = memberRepository.findById(reviewReqDto.getMemberId()).orElseThrow(NotFoundMemberException::new);
+
         List<Image> images = new ArrayList<>();
         for (Long imageId : reviewReqDto.getImageIds()) {
             Image image = imageRepository.findById(imageId).orElseThrow(NotFoundImageException::new);
@@ -57,7 +58,7 @@ public class ReviewService {
     //리뷰 상세 조회
     @Transactional
     public ReviewDto findById(Long reviewId){
-        Review review = reviewRepository.findById(reviewId).orElseThrow(NotFoundReviewException::new);
+        Review review = reviewRepository.findByIdAndVisible(reviewId, true);
         List<String> images = new ArrayList<>();
         for (Image image : review.getImages()) {
             String imageUrl = image.getImageUrl();
@@ -94,13 +95,13 @@ public class ReviewService {
     public Page<ReviewListDto> findAllReviewsBySort(String sort, int page, int size) {
         Page<Review> reviewsListPage;
         if (sort.equals("id")){
-            reviewsListPage = reviewRepository.findAll(
+            reviewsListPage = reviewRepository.findAllByVisible(true,
                     PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, "Id")));
         }else if (sort.equals("likes")){
-            reviewsListPage = reviewRepository.findAll(
+            reviewsListPage = reviewRepository.findAllByVisible(true,
                     PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "likes")));
         }else{
-            reviewsListPage = reviewRepository.findAll(
+            reviewsListPage = reviewRepository.findAllByVisible(true,
                     PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, "Id")));
         }
 
@@ -111,7 +112,7 @@ public class ReviewService {
     //리뷰 검색
     @Transactional
     public Page<ReviewListDto> searchReviews(String searchKeyword, int page, int size) {
-        Page<Review> noticeSearchPage = reviewRepository.findByTitleContainingOrContentContaining(
+        Page<Review> noticeSearchPage = reviewRepository.findByVisibleAndTitleContainingOrContentContaining(true,
                 searchKeyword.trim(), searchKeyword.trim(), PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, "Id")));
 
         return noticeSearchPage.map(this::reviewListMap);

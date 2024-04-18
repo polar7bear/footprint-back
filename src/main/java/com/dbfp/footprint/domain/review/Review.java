@@ -35,6 +35,10 @@ public class Review {
 
     private Integer likes;
 
+    private String region;
+
+    private boolean visible;
+
     @Temporal(TemporalType.TIMESTAMP)
     private LocalDateTime createdAt;
 
@@ -46,11 +50,14 @@ public class Review {
 
     @Builder
     private Review(String title, String content,
-                  Member member, List<Image> images) {
+                  Member member, boolean visible,
+                   String region, List<Image> images) {
         this.title = title;
         this.content = content;
         this.member = member;
         this.images = images;
+        this.region = region;
+        this.visible = visible;
         this.createdAt = LocalDateTime.now();
         this.likes = 0;
     }
@@ -60,6 +67,8 @@ public class Review {
                 .title(reviewReqDto.getTitle())
                 .content(reviewReqDto.getContent())
                 .member(member)
+                .visible(reviewReqDto.isVisible())
+                .region(reviewReqDto.getRegion())
                 .images(images)
                 .build();
     }
@@ -67,6 +76,8 @@ public class Review {
     public void update(UpdateReviewRequest reviewReqDto, List<Image> images) {
         this.title = reviewReqDto.getTitle();
         this.content = reviewReqDto.getContent();
+        this.visible = reviewReqDto.isVisible();
+        this.region = reviewReqDto.getRegion();
         this.images = images;
         this.createdAt = LocalDateTime.now();
     }

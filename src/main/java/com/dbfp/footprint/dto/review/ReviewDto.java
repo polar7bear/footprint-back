@@ -28,8 +28,11 @@ public class ReviewDto {
     @Schema(name = "createdAt", example = "2024-04-11T17:18:53.457879")
     private LocalDateTime createdAt;
 
-    @Schema(name = "좋아요 개수", example = "1")
+    @Schema(name = "likes", example = "1")
     private Integer likes;
+
+    @Schema(name = "region", example = "부산")
+    private String region;
 
     @Schema(name = "images", example = "[ " +
             " \"https://dfbf-footprint.s3.ap-northeast-2.amazonaws.com/472684f1-3618-47ae-8cc4-493179ae85a8_1.jpg\""
@@ -37,8 +40,8 @@ public class ReviewDto {
     private List<String> images;
 
     @Builder
-    private ReviewDto(Long memberId,
-                      String title, String content,
+    private ReviewDto(Long memberId, String title,
+                      String content, String region,
                       List<String> images, Integer likes) {
         //this.reviewId = reviewId;
         this.memberId = memberId;
@@ -46,6 +49,7 @@ public class ReviewDto {
         this.content = content;
         this.images = images;
         this.likes = likes;
+        this.region = region;
         this.createdAt = LocalDateTime.now();
     }
 
