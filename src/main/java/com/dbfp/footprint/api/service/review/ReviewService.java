@@ -101,13 +101,13 @@ public class ReviewService {
         Page<Review> reviewsListPage;
         if (sort.equals("id")){
             reviewsListPage = reviewRepository.findAllByVisible(true,
-                    PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, "Id")));
+                    PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "Id")));
         }else if (sort.equals("likes")){
             reviewsListPage = reviewRepository.findAllByVisible(true,
                     PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "likes")));
         }else{
             reviewsListPage = reviewRepository.findAllByVisible(true,
-                    PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, "Id")));
+                    PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "Id")));
         }
 
 
