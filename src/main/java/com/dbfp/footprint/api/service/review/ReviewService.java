@@ -68,14 +68,38 @@ public class ReviewService {
     //리뷰 상세 조회
     @Transactional
     public ReviewDto findById(Long reviewId){
-        Review review = reviewRepository.findByIdAndVisible(reviewId, true);
-        List<String> images = new ArrayList<>();
-        for (Image image : review.getImages()) {
-            String imageUrl = image.getImageUrl();
-            images.add(imageUrl);
-        }
+        Review review = reviewRepository.findById(reviewId).orElseThrow(NotFoundReviewException::new);
 
-        return ReviewDto.of(review, images);
+        //공개상태면 그냥 리뷰상세조회 리턴
+        if (review.isVisible()){
+            List<String> images = new ArrayList<>();
+            List<Long> imageIds = new ArrayList<>();
+
+            for (Image image : review.getImages()) {
+                String imageUrl = image.getImageUrl();
+                Long imageId = image.getId();
+
+                images.add(imageUrl);
+                imageIds.add(imageId);
+            }
+
+            return ReviewDto.of(review, images, imageIds);
+        } else {
+            // 비공개상태면 작성자가 조회한사람의 id와 같은지 확인 후 응답
+            //이때 조회한사람의 id를 토큰에서 받아오고 싶습니다
+            List<String> images = new ArrayList<>();
+            List<Long> imageIds = new ArrayList<>();
+
+            for (Image image : review.getImages()) {
+                String imageUrl = image.getImageUrl();
+                Long imageId = image.getId();
+
+                images.add(imageUrl);
+                imageIds.add(imageId);
+            }
+
+            return ReviewDto.of(review, images, imageIds);
+        }
     }
 
     //내가 작성한 리뷰 목록 조회
