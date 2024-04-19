@@ -27,10 +27,6 @@ public class Review {
     @JoinColumn(nullable = false, name = "member_id")
     private Member member;
 
-//    @OneToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(nullable = true, name = "plan_id")
-//    private Plan plan;
-//    private Long planId;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(nullable = true, name = "plan_id")
     private Plan plan;

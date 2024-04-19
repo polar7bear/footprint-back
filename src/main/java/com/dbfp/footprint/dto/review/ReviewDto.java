@@ -35,16 +35,25 @@ public class ReviewDto {
     @Schema(name = "region", example = "부산")
     private String region;
 
+    @Schema(name = "visible", example = "true")
+    private boolean visible;
+
     @Schema(name = "images", example = "[ " +
             " \"https://dfbf-footprint.s3.ap-northeast-2.amazonaws.com/472684f1-3618-47ae-8cc4-493179ae85a8_1.jpg\""
             +" ]")
     private List<String> images;
 
+    @Schema(name = "imageIds", example = "[ " +
+            "1"
+            +" ]")
+    private List<Long> imageIds;
+
     @Builder
     private ReviewDto(Long memberId, String title,
                       String content, String region,
                       List<String> images, Integer likes,
-                      Long planId, LocalDateTime createdAt) {
+                      Long planId, LocalDateTime createdAt,
+                      List<Long> imageIds, boolean visible) {
         this.memberId = memberId;
         this.planId = planId;
         this.title = title;
@@ -52,10 +61,12 @@ public class ReviewDto {
         this.images = images;
         this.likes = likes;
         this.region = region;
+        this.visible = visible;
         this.createdAt = createdAt;
+        this.imageIds = imageIds;
     }
 
-    public static ReviewDto of(Review review, List<String> images) {
+    public static ReviewDto of(Review review, List<String> images, List<Long> imageIds) {
         if(review.getPlan()==null){
             return ReviewDto.builder()
                     .memberId(review.getMember().getId())
@@ -66,6 +77,8 @@ public class ReviewDto {
                     .images(images)
                     .likes(review.getLikes())
                     .createdAt(review.getCreatedAt())
+                    .imageIds(imageIds)
+                    .visible(review.isVisible())
                     .build();
         }else {
             return ReviewDto.builder()
@@ -75,6 +88,8 @@ public class ReviewDto {
                     .title(review.getTitle())
                     .content(review.getContent())
                     .images(images)
+                    .imageIds(imageIds)
+                    .visible(review.isVisible())
                     .likes(review.getLikes())
                     .createdAt(review.getCreatedAt())
                     .build();
