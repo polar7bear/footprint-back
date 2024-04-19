@@ -40,7 +40,8 @@ public class PlanBookmarkController {
     }
 
     @GetMapping
-    public ResponseEntity<List<FindAllPlanBookmarkResponse>> getBookmarkedPlans(@RequestParam Long memberId) {
+    public ResponseEntity<List<FindAllPlanBookmarkResponse>> getBookmarkedPlans(@AuthenticationPrincipal CustomUserDetails userDetails) {
+        Long memberId = userDetails.getId();
         List<PlanDto> bookmarkedPlans = planBookmarkService.getBookmarkedPlans(memberId);
 
         List<FindAllPlanBookmarkResponse> response = bookmarkedPlans.stream()
