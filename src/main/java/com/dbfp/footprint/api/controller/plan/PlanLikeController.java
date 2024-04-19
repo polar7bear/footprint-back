@@ -2,6 +2,7 @@ package com.dbfp.footprint.api.controller.plan;
 
 import com.dbfp.footprint.api.response.ApiResult;
 import com.dbfp.footprint.api.service.plan.PlanLikeService;
+import com.dbfp.footprint.config.CustomUserDetails;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
@@ -9,6 +10,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,7 +33,8 @@ public class PlanLikeController {
                     examples = @ExampleObject(name = "성공적인 응답", value = "{\"liked\": true, \"likeCount\": 10}")))
     @Transactional
     @PostMapping("/{planId}")
-    public ResponseEntity<ApiResult<Map<String, Object>>> toggleLike(@PathVariable Long planId, @RequestParam Long memberId) {
+    public ResponseEntity<ApiResult<Map<String, Object>>> toggleLike(@PathVariable Long planId, @AuthenticationPrincipal CustomUserDetails userDetails) {
+        Long memberId = userDetails.getId();
         boolean isLiked = planLikeService.toggleLike(memberId, planId);
         int likeCount = planLikeService.countLikes(planId);
 

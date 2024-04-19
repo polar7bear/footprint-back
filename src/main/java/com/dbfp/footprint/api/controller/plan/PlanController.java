@@ -16,6 +16,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
@@ -66,7 +67,8 @@ public class PlanController {
 
     @Operation(summary = "계획 조회", description = "특정 계획의 상세 정보를 가져옵니다.")
     @GetMapping("/{planId}")
-    public ResponseEntity<ApiResult<PlanResponse>> getPlanDetails(@PathVariable Long planId, @RequestParam(required = false) Long memberId) {
+    public ResponseEntity<ApiResult<PlanResponse>> getPlanDetails(@PathVariable Long planId,  @AuthenticationPrincipal CustomUserDetails userDetails) {
+        Long memberId = userDetails.getId();
         PlanResponse planDto = planService.getPlanDetails(planId, memberId);
         return ResponseEntity.ok(new ApiResult<>(planDto));
     }
