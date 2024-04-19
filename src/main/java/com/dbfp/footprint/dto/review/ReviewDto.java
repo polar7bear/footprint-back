@@ -14,10 +14,11 @@ import java.util.List;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ReviewDto {
-    //private Long reviewId;
-
     @Schema(name = "memberId", example = "1", required = true)
     private Long memberId;
+
+    @Schema(name = "planId", example = "1")
+    private Long planId;
 
     @Schema(name = "title", example = "1박 2일 부산여행")
     private String title;
@@ -42,25 +43,41 @@ public class ReviewDto {
     @Builder
     private ReviewDto(Long memberId, String title,
                       String content, String region,
-                      List<String> images, Integer likes) {
-        //this.reviewId = reviewId;
+                      List<String> images, Integer likes,
+                      Long planId, LocalDateTime createdAt) {
         this.memberId = memberId;
+        this.planId = planId;
         this.title = title;
         this.content = content;
         this.images = images;
         this.likes = likes;
         this.region = region;
-        this.createdAt = LocalDateTime.now();
+        this.createdAt = createdAt;
     }
 
     public static ReviewDto of(Review review, List<String> images) {
-        return ReviewDto.builder()
-                //.reviewId(review.getId())
-                .memberId(review.getMember().getId())
-                .title(review.getTitle())
-                .content(review.getContent())
-                .images(images)
-                .likes(review.getLikes())
-                .build();
+        if(review.getPlan()==null){
+            return ReviewDto.builder()
+                    .memberId(review.getMember().getId())
+                    .planId(null)
+                    .region(review.getRegion())
+                    .title(review.getTitle())
+                    .content(review.getContent())
+                    .images(images)
+                    .likes(review.getLikes())
+                    .createdAt(review.getCreatedAt())
+                    .build();
+        }else {
+            return ReviewDto.builder()
+                    .memberId(review.getMember().getId())
+                    .planId(review.getPlan().getId())
+                    .region(review.getRegion())
+                    .title(review.getTitle())
+                    .content(review.getContent())
+                    .images(images)
+                    .likes(review.getLikes())
+                    .createdAt(review.getCreatedAt())
+                    .build();
+        }
     }
 }
