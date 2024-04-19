@@ -9,8 +9,6 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,7 +27,11 @@ public class Review {
     @JoinColumn(nullable = false, name = "member_id")
     private Member member;
 
-    @OneToOne(fetch = FetchType.LAZY)
+//    @OneToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(nullable = true, name = "plan_id")
+//    private Plan plan;
+//    private Long planId;
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(nullable = true, name = "plan_id")
     private Plan plan;
 

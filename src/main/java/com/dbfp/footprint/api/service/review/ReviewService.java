@@ -50,7 +50,10 @@ public class ReviewService {
     @Transactional
     public Long create(CreateReviewRequest reviewReqDto){
         Member member = memberRepository.findById(reviewReqDto.getMemberId()).orElseThrow(NotFoundMemberException::new);
-        Plan plan = planRepository.findById(reviewReqDto.getPlanId()).orElseThrow(PlanNotFoundException::new);
+        Plan plan = null;
+        if (reviewReqDto.getPlanId() != null){
+            plan = planRepository.findById(reviewReqDto.getPlanId()).orElseThrow(PlanNotFoundException::new);
+        }
         Review review = Review.of(reviewReqDto, member, plan);
 
         for (Long imageId : reviewReqDto.getImageIds()) {
