@@ -89,8 +89,6 @@ public class ReviewService {
 
             return ReviewDto.of(review, images, imageIds);
         } else { // 비공개 리뷰라면 & 작성자가 일치하지 않다면
-            // 비공개상태면 작성자가 조회한사람의 id와 같은지 확인 후 응답
-            //이때 조회한사람의 id를 토큰에서 받아오고 싶습니다
             throw new UnauthorizedAccessException();
         }
     }
@@ -223,12 +221,16 @@ public class ReviewService {
     // 리뷰 수정
     @Transactional
     public void update(UpdateReviewRequest reviewReqDto) {
-        List<Image> images = new ArrayList<>();
+        Review review = reviewRepository.findById(reviewReqDto.getReviewId()).orElseThrow(NotFoundReviewException::new);
+        review.getImages().clear();
+
         for (Long imageId : reviewReqDto.getImageIds()) {
             Image image = imageRepository.findById(imageId).orElseThrow(NotFoundImageException::new);
-            images.add(image);
+            image.setReview(review);
+            review.addImage(image);
         }
-        reviewRepository.findById(reviewReqDto.getReviewId()).orElseThrow(NotFoundReviewException::new).update(reviewReqDto, images);
+
+        review.update(reviewReqDto);
     }
 
     //리뷰삭제 (회원본인인지 검사 필요 memberid를 받든, athor토큰으로 회원확인을 하든)
