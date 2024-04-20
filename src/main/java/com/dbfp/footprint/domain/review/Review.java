@@ -33,6 +33,7 @@ public class Review {
 
     private String title;
 
+    @Column(length = 50000)
     private String content;
 
     private Integer likes;
@@ -75,12 +76,11 @@ public class Review {
                 .build();
     }
 
-    public void update(UpdateReviewRequest reviewReqDto, List<Image> images) {
+    public void update(UpdateReviewRequest reviewReqDto) {
         this.title = reviewReqDto.getTitle();
         this.content = reviewReqDto.getContent();
         this.visible = reviewReqDto.isVisible();
         this.region = reviewReqDto.getRegion();
-        this.images = images;
         this.createdAt = LocalDateTime.now();
     }
 
@@ -106,6 +106,7 @@ public class Review {
     }
 
     public void addImage(Image image){
+        image.setReview(this);
         this.images.add(image);
     }
 }
