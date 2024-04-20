@@ -54,8 +54,9 @@ public class ReivewController {
             @ApiResponse(responseCode = "401", description = "헤더 없음 or 토큰 불일치", content = @Content(schema = @Schema(example = "INVALID_HEADER or INVALID_TOKEN"))),
             @ApiResponse(responseCode = "500", description = "비공개 리뷰")
     })
-    public ResponseEntity<ReviewDto> findReview(@PathVariable(name = "reviewId") Long reviewId){
-        ReviewDto reviewDto = reviewService.findById(reviewId);
+    public ResponseEntity<ReviewDto> findReview(@PathVariable(name = "reviewId") Long reviewId, @AuthenticationPrincipal CustomUserDetails userDetails){
+        Long memberId = userDetails.getId();
+        ReviewDto reviewDto = reviewService.findById(reviewId, memberId);
         return new ResponseEntity<>(reviewDto, HttpStatus.OK);
     }
 
