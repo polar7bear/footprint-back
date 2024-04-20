@@ -29,6 +29,57 @@ public class CustomPlanRepositoryImpl implements CustomPlanRepository {
     }
 
 
+//    @Override
+//    public Page<Plan> findByKeywordIncludingPlaceName(String keyword, Pageable pageable) {
+//        QPlan plan = QPlan.plan;
+//        QSchedule schedule = QSchedule.schedule;
+//        QPlace place = QPlace.place;
+//        QPlaceDetails placeDetails = QPlaceDetails.placeDetails;
+//
+//        List<OrderSpecifier<?>> orders = new ArrayList<>();
+//
+//        if (pageable.getSort().isSorted()) {
+//            pageable.getSort().forEach(order -> {
+//                PathBuilder<Object> entityPath = new PathBuilder<>(Object.class, plan.getMetadata().getName());
+//                OrderSpecifier<?> orderSpecifier = new OrderSpecifier(
+//                        order.isAscending() ? Order.ASC : Order.DESC,
+//                        entityPath.getComparable(order.getProperty(), Comparable.class));
+//                orders.add(orderSpecifier);
+//            });
+//        }
+//
+//        if (pageable.getSort().getOrderFor("id") == null) {
+//            orders.add(new OrderSpecifier<>(Order.DESC, Expressions.path(Comparable.class, plan, "id")));
+//        }
+//
+//        List<Plan> plans = queryFactory
+//                .selectFrom(plan)
+//                .leftJoin(plan.schedules, schedule)
+//                .leftJoin(schedule.place, place)
+//                .leftJoin(place.placeDetails, placeDetails)
+//                .where(plan.visible.isTrue()
+//                        .and(plan.title.containsIgnoreCase(keyword)
+//                                .or(plan.region.containsIgnoreCase(keyword))
+//                                .or(place.placeName.containsIgnoreCase(keyword))
+//                                .or(placeDetails.memo.containsIgnoreCase(keyword))))
+//                .offset(pageable.getOffset())
+//                .limit(pageable.getPageSize())
+//                .orderBy(orders.toArray(new OrderSpecifier<?>[0]))
+//                .fetch();
+//
+//        long total = queryFactory
+//                .selectFrom(plan)
+//                .leftJoin(plan.schedules, schedule)
+//                .leftJoin(schedule.place, place)
+//                .where(plan.visible.isTrue()
+//                        .and(plan.title.containsIgnoreCase(keyword)
+//                                .or(plan.region.containsIgnoreCase(keyword))
+//                                .or(place.placeName.containsIgnoreCase(keyword))))
+//                .fetchCount();
+//
+//        return new PageImpl<>(plans, pageable, total);
+//    }
+
     @Override
     public Page<Plan> findByKeywordIncludingPlaceName(String keyword, Pageable pageable) {
         QPlan plan = QPlan.plan;
@@ -37,23 +88,24 @@ public class CustomPlanRepositoryImpl implements CustomPlanRepository {
         QPlaceDetails placeDetails = QPlaceDetails.placeDetails;
 
         List<OrderSpecifier<?>> orders = new ArrayList<>();
-        
+
         if (pageable.getSort().isSorted()) {
             pageable.getSort().forEach(order -> {
-                PathBuilder<Object> entityPath = new PathBuilder<>(Object.class, plan.getMetadata().getName());
+                PathBuilder<Plan> entityPath = new PathBuilder<>(Plan.class, plan.getMetadata().getName());
                 OrderSpecifier<?> orderSpecifier = new OrderSpecifier(
                         order.isAscending() ? Order.ASC : Order.DESC,
-                        entityPath.getComparable(order.getProperty(), Comparable.class));
+                        entityPath.get(order.getProperty()));
                 orders.add(orderSpecifier);
             });
         }
 
         if (pageable.getSort().getOrderFor("id") == null) {
-            orders.add(new OrderSpecifier<>(Order.DESC, Expressions.path(Comparable.class, plan, "id")));
+            orders.add(new OrderSpecifier<>(Order.DESC, plan.id));
         }
 
         List<Plan> plans = queryFactory
                 .selectFrom(plan)
+                .distinct()
                 .leftJoin(plan.schedules, schedule)
                 .leftJoin(schedule.place, place)
                 .leftJoin(place.placeDetails, placeDetails)
@@ -61,6 +113,7 @@ public class CustomPlanRepositoryImpl implements CustomPlanRepository {
                         .and(plan.title.containsIgnoreCase(keyword)
                                 .or(plan.region.containsIgnoreCase(keyword))
                                 .or(place.placeName.containsIgnoreCase(keyword))
+                                .or(place.address.containsIgnoreCase(keyword))
                                 .or(placeDetails.memo.containsIgnoreCase(keyword))))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
@@ -68,15 +121,21 @@ public class CustomPlanRepositoryImpl implements CustomPlanRepository {
                 .fetch();
 
         long total = queryFactory
-                .selectFrom(plan)
+                .select(plan.countDistinct())
+                .from(plan)
                 .leftJoin(plan.schedules, schedule)
                 .leftJoin(schedule.place, place)
+                .leftJoin(place.placeDetails, placeDetails)
                 .where(plan.visible.isTrue()
                         .and(plan.title.containsIgnoreCase(keyword)
-                                .or(plan.region.containsIgnoreCase(keyword))
-                                .or(place.placeName.containsIgnoreCase(keyword))))
+                                .or(plan.region.containsIgnoreCase(keyword)
+                                        .or(place.placeName.containsIgnoreCase(keyword)
+                                                .or(place.address.containsIgnoreCase(keyword)
+                                                        .or(placeDetails.memo.containsIgnoreCase(keyword)))))))
                 .fetchCount();
+
 
         return new PageImpl<>(plans, pageable, total);
     }
+
 }
