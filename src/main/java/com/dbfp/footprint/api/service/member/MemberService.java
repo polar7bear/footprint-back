@@ -62,7 +62,7 @@ public class MemberService {
         RefreshToken refreshEntity = new RefreshToken(refresh, authentication.getName());
         refreshTokenRepository.save(refreshEntity);
 
-        return new LoginMemberResponse(authentication.getName(), access, refresh, accessTokenExpire);
+        return new LoginMemberResponse(authentication.getName(), member.getNickname(), access, refresh, accessTokenExpire);
     }
 
     @Transactional
@@ -90,13 +90,17 @@ public class MemberService {
             if (refresh.isPresent() && request.getRefreshToken().equals(refresh.get().getRefreshToken())) {
                 String email = refresh.get().getEmail();
                 UserDetails userDetails = userDetailsService.loadUserByUsername(email);
+
+                Member member = memberRepository.findByEmail(email).orElseThrow(() ->
+                        new UsernameNotFoundException("사용자를 찾을 수 없습니다."));
+
                 Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                 SecurityContextHolder.getContext().setAuthentication(authentication);
 
                 String newAccessToken = tokenProvider.createAccessToken(authentication);
                 Long accessTokenExpire = tokenProvider.getAccessTokenExpire(newAccessToken).getTime();
 
-                return new LoginMemberResponse(userDetails.getUsername(), newAccessToken, request.getRefreshToken(), accessTokenExpire);
+                return new LoginMemberResponse(userDetails.getUsername(), member.getNickname(), newAccessToken, request.getRefreshToken(), accessTokenExpire);
             } else {
                 throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "유효하지 않은 리프레쉬 토큰입니다.");
             }
