@@ -64,3 +64,8 @@ management:
       exposure:
         include: "prometheus"
       base-path:  "/api/actuator"
+
+kakao:
+  client_id: {kakao.cliend_id}
+  redirect_uri: {kakao.redirect_uri}
+  password: {kakao.password}
