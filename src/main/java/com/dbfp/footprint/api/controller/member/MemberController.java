@@ -31,7 +31,7 @@ public class MemberController {
 
     @PostMapping("/signup")
     public ResponseEntity<CreateMemberResponse> signUp(@Valid @RequestBody CreateMemberRequest request) {
-        CreateMemberResponse response = memberService.signUp(request.getEmail(), request.getPassword(), request.getNickname());
+        CreateMemberResponse response = memberService.signUp(request.getEmail(), request.getPassword(), request.getNickname(), request.getKakaoId());
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
