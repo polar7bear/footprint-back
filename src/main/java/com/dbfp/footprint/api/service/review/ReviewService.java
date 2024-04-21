@@ -148,6 +148,7 @@ public class ReviewService {
             return new ReviewListDto(
                     review.getId(),
                     review.getMember().getId(),
+                    review.getMember().getNickname(), //
                     review.getTitle(),
                     review.getCreatedAt(),
                     review.getLikes(),
@@ -157,6 +158,7 @@ public class ReviewService {
             return new ReviewListDto(
                     review.getId(),
                     review.getMember().getId(),
+                    review.getMember().getNickname(),
                     review.getTitle(),
                     review.getCreatedAt(),
                     review.getLikes(),
@@ -171,6 +173,7 @@ public class ReviewService {
             return new ReviewListDto(
                     review.getId(),
                     review.getMember().getId(),
+                    review.getMember().getNickname(),
                     review.getTitle(),
                     review.getCreatedAt(),
                     review.getLikes(),
@@ -180,6 +183,7 @@ public class ReviewService {
             return new ReviewListDto(
                     review.getId(),
                     review.getMember().getId(),
+                    review.getMember().getNickname(),
                     review.getTitle(),
                     review.getCreatedAt(),
                     review.getLikes(),

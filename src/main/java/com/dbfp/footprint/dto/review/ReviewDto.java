@@ -17,6 +17,9 @@ public class ReviewDto {
     @Schema(name = "memberId", example = "1", required = true)
     private Long memberId;
 
+    @Schema(name = "nickname", example = "닉네임123")
+    private String nickname;
+
     @Schema(name = "planId", example = "1")
     private Long planId;
 
@@ -49,12 +52,13 @@ public class ReviewDto {
     private List<Long> imageIds;
 
     @Builder
-    private ReviewDto(Long memberId, String title,
+    private ReviewDto(Long memberId, String nickname, String title,
                       String content, String region,
                       List<String> images, Integer likes,
                       Long planId, LocalDateTime createdAt,
                       List<Long> imageIds, boolean visible) {
         this.memberId = memberId;
+        this.nickname = nickname;
         this.planId = planId;
         this.title = title;
         this.content = content;
@@ -70,6 +74,7 @@ public class ReviewDto {
         if(review.getPlan()==null){
             return ReviewDto.builder()
                     .memberId(review.getMember().getId())
+                    .nickname(review.getMember().getNickname())
                     .planId(null)
                     .region(review.getRegion())
                     .title(review.getTitle())

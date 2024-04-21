@@ -66,7 +66,7 @@ public class MemberService {
     }
 
     @Transactional
-    public CreateMemberResponse signUp(String email, String password, String nickname) {
+    public CreateMemberResponse signUp(String email, String password, String nickname, String kakaoId) {
 
         memberRepository.findByEmail(email).ifPresent(it -> {
             throw new DuplicatedEmailException();
@@ -76,12 +76,20 @@ public class MemberService {
             throw new DuplicatedNicknameException();
         });
 
-        Member member = memberRepository.save(Member.of(nickname, email, passwordEncoder.encode(password)));
+        password = passwordEncoder.encode(password);
+        Member member;
 
-        return new CreateMemberResponse(member.getId(), member.getEmail(), member.getNickname());
+        if (email.startsWith("KAKAO_") && nickname.startsWith("회원")) {
+            member = memberRepository.save(Member.of(nickname, email, password, kakaoId));
+        } else {
+            member = memberRepository.save(Member.of(nickname, email, password, null));
+        }
+
+        return new CreateMemberResponse(member.getId(), member.getEmail(), member.getNickname(), member.getKakaoId());
     }
 
     //액세스 토큰 재발급 로직
+    @Transactional(readOnly = true)
     public LoginMemberResponse refresh(CreateRefreshTokenRequest request) {
         try {
             tokenProvider.validateToken(request.getRefreshToken());
@@ -113,14 +121,11 @@ public class MemberService {
     public boolean deleteByToken(String refreshToken) {
         int count = refreshTokenRepository.deleteByRefreshToken(refreshToken);
         return count > 0;
-        /*Optional<RefreshToken> refresh = refreshTokenRepository.findByRefreshToken(refreshToken);
+    }
 
-        if (refresh.isPresent()) {
-            refreshTokenRepository.deleteByRefreshToken(refreshToken);
-            return true;
-        } else {
-            return false;
-        }*/
+    @Transactional(readOnly = true)
+    public Optional<Member> findMember(String email) {
+        return memberRepository.findByEmail(email);
     }
 
 }
