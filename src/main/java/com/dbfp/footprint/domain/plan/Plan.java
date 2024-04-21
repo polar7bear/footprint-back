@@ -7,8 +7,10 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -52,6 +54,10 @@ public class Plan {
     private int bookmarkCount;
     @Column(nullable = false, columnDefinition = "INT DEFAULT 0")
     private int likeCount;
+
+    @CreationTimestamp
+    @Column(nullable = false, updatable = false)
+    private LocalDateTime createdAt;
 
     public static Plan of(PlanDto dto, Member member) {
         Plan plan = new Plan();
