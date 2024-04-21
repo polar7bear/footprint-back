@@ -20,6 +20,9 @@ public class PlanResponse {
     @Schema(description = "계획 ID", example = "1")
     private Long id;
 
+    @Schema(description = "작성자 ID", example = "2")
+    private Long writerId;
+
     @Schema(description = "계획 제목", example = "Summer Vacation")
     private String title;
 
@@ -76,6 +79,7 @@ public class PlanResponse {
     public static PlanResponse from(Plan plan) {
         PlanResponse planResponse = new PlanResponse();
         planResponse.setId(plan.getId());
+        planResponse.setWriterId(plan.getMember().getId());
         planResponse.setTitle(plan.getTitle());
         planResponse.setStartDate(plan.getStartDate());
         planResponse.setEndDate(plan.getEndDate());
