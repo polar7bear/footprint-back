@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -19,6 +20,12 @@ public class PlanResponse {
 
     @Schema(description = "계획 ID", example = "1")
     private Long id;
+
+    @Schema(description = "작성자 ID", example = "2")
+    private Long writerId;
+
+    @Schema(description = "작성자 닉네임", example = "닉네임123")
+    private String nickname;
 
     @Schema(description = "계획 제목", example = "Summer Vacation")
     private String title;
@@ -48,6 +55,9 @@ public class PlanResponse {
     @Schema(description = "북마크 수", example = "5")
     private int bookmarkCount;
 
+    @Schema(description = "계획 생성 시간", example = "2024-04-15T12:00:00")
+    private LocalDateTime createdAt;
+
 //    public PlanResponse(Long id, String title, LocalDate startDate, LocalDate endDate, String region, boolean visible, boolean copyAllowed, List<ScheduleDto> schedules) {
 //        this.id = id;
 //        this.title = title;
@@ -76,6 +86,8 @@ public class PlanResponse {
     public static PlanResponse from(Plan plan) {
         PlanResponse planResponse = new PlanResponse();
         planResponse.setId(plan.getId());
+        planResponse.setWriterId(plan.getMember().getId());
+        planResponse.setNickname(plan.getMember().getNickname());
         planResponse.setTitle(plan.getTitle());
         planResponse.setStartDate(plan.getStartDate());
         planResponse.setEndDate(plan.getEndDate());
@@ -87,6 +99,7 @@ public class PlanResponse {
                 .collect(Collectors.toList()));
         planResponse.setLikeCount(plan.getLikeCount());
         planResponse.setBookmarkCount(plan.getBookmarkCount());
+        planResponse.setCreatedAt(plan.getCreatedAt());
         return planResponse;
     }
 }

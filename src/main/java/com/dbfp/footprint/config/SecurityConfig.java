@@ -44,7 +44,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorize ->
                         authorize
                                 .requestMatchers(HttpMethod.GET, "/v3/api-docs/**", "/swagger-ui/**", "/api/actuator/**","/swagger-resources/**", "/api/plans", "/api/plans/{planId}", "/api/review/{reviewId}", "/api/reviews").permitAll()
-                                .requestMatchers("/api/signup", "/api/login", "/api/refresh").permitAll()
+                                .requestMatchers("/api/signup", "/api/login", "/api/refresh", "/kakao/callback").permitAll()
                                 .anyRequest().authenticated()
                         )
                 .sessionManagement(sessionManagement ->

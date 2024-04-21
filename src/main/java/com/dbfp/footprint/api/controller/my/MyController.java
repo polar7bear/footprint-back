@@ -5,6 +5,7 @@ import com.dbfp.footprint.api.response.PlanBookmarkResponse;
 import com.dbfp.footprint.api.response.PlanResponse;
 import com.dbfp.footprint.api.service.plan.PlanBookmarkService;
 import com.dbfp.footprint.api.service.plan.PlanService;
+import com.dbfp.footprint.config.CustomUserDetails;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 //import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -18,6 +19,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -34,9 +36,10 @@ public class MyController {
     @Operation(summary = "회원 계획 조회", description = "특정 회원이 생성한 계획을 검색합니다. 계획은 ID 기준으로 정렬되며, region, bookmarkCount, likeCount 으로도 정렬할 수 있습니다.")
 
     @GetMapping("/plans")
-    public ResponseEntity<ApiResult<Page<PlanResponse>>> getUserPlans(@Parameter(description = "회원 ID") @RequestParam Long memberId, @Parameter(description = "페이지 번호 (0부터 시작)", example = "0") @RequestParam(defaultValue = "0") int page,
+    public ResponseEntity<ApiResult<Page<PlanResponse>>> getUserPlans(@AuthenticationPrincipal CustomUserDetails userDetails, @Parameter(description = "페이지 번호 (0부터 시작)", example = "0") @RequestParam(defaultValue = "0") int page,
                                                                       @Parameter(description = "페이지 당 항목 수", example = "10") @RequestParam(defaultValue = "10") int size,
                                                                       @Parameter(description = "정렬 기준 (예: sort=bookmarkCount,asc)") @RequestParam(defaultValue = "id,desc") String sort) {
+        Long memberId = userDetails.getId();
         Pageable pageable = preparePageable(page, size, sort);
         Page<PlanResponse> userPlans = planService.findPlansByUserId(memberId, pageable);
         return ResponseEntity.ok(new ApiResult<>(userPlans));
@@ -47,10 +50,11 @@ public class MyController {
             "정렬 옵션은 'id' 필드에 대해 오름차순('asc')과 내림차순('desc')을 지원합니다. " +
             "예를 들어, 정렬 기준으로 'sort=id,asc' 또는 'sort=id,desc'(기본값, 생략가능)를 사용할 수 있습니다.")
     @GetMapping("/bookmarks")
-    public ResponseEntity<ApiResult<Page<PlanBookmarkResponse>>> getBookmarksByMember(@RequestParam Long memberId,
+    public ResponseEntity<ApiResult<Page<PlanBookmarkResponse>>> getBookmarksByMember(@AuthenticationPrincipal CustomUserDetails userDetails,
                                                                                       @Parameter(description = "페이지 번호 (0부터 시작)", example = "0") @RequestParam(defaultValue = "0") int page,
                                                                                       @Parameter(description = "페이지 당 항목 수", example = "10") @RequestParam(defaultValue = "10") int size,
                                                                                       @Parameter(description = "정렬 기준 (예: sort=id,asc)") @RequestParam(defaultValue = "id,desc") String sort) {
+        Long memberId = userDetails.getId();
         Pageable pageable = preparePageable(page, size, sort);
         Page<PlanBookmarkResponse> bookmarks = planBookmarkService.findBookmarksByMemberId(memberId, pageable);
         return ResponseEntity.ok(new ApiResult<>(bookmarks));

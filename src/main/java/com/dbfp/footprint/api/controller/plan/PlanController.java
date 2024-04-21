@@ -5,18 +5,19 @@ import com.dbfp.footprint.api.response.ApiResult;
 import com.dbfp.footprint.api.response.CreatePlanResponse;
 import com.dbfp.footprint.api.response.PlanResponse;
 import com.dbfp.footprint.api.service.plan.PlanService;
+import com.dbfp.footprint.config.CustomUserDetails;
 import com.dbfp.footprint.dto.PlanDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -28,7 +29,11 @@ public class PlanController {
     private final PlanService planService;
 
     @PostMapping
-    public ResponseEntity<CreatePlanResponse> createPlanOrCopyPlan(@RequestBody CreatePlanRequest request, @RequestParam Long memberId) {
+    public ResponseEntity<CreatePlanResponse> createPlanOrCopyPlan(@RequestBody CreatePlanRequest request) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+        Long memberId = userDetails.getId();
+
         PlanDto planDto = PlanDto.convertToPlanDto(request);
         PlanDto createdPlanDto;
 
@@ -62,7 +67,8 @@ public class PlanController {
 
     @Operation(summary = "계획 조회", description = "특정 계획의 상세 정보를 가져옵니다.")
     @GetMapping("/{planId}")
-    public ResponseEntity<ApiResult<PlanResponse>> getPlanDetails(@PathVariable Long planId, @RequestParam(required = false) Long memberId) {
+    public ResponseEntity<ApiResult<PlanResponse>> getPlanDetails(@PathVariable Long planId,  @AuthenticationPrincipal CustomUserDetails userDetails) {
+        Long memberId = userDetails.getId();
         PlanResponse planDto = planService.getPlanDetails(planId, memberId);
         return ResponseEntity.ok(new ApiResult<>(planDto));
     }

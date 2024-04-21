@@ -9,8 +9,6 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,12 +27,13 @@ public class Review {
     @JoinColumn(nullable = false, name = "member_id")
     private Member member;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(nullable = true, name = "plan_id")
     private Plan plan;
 
     private String title;
 
+    @Column(length = 50000)
     private String content;
 
     private Integer likes;
@@ -77,12 +76,11 @@ public class Review {
                 .build();
     }
 
-    public void update(UpdateReviewRequest reviewReqDto, List<Image> images) {
+    public void update(UpdateReviewRequest reviewReqDto) {
         this.title = reviewReqDto.getTitle();
         this.content = reviewReqDto.getContent();
         this.visible = reviewReqDto.isVisible();
         this.region = reviewReqDto.getRegion();
-        this.images = images;
         this.createdAt = LocalDateTime.now();
     }
 
@@ -108,6 +106,7 @@ public class Review {
     }
 
     public void addImage(Image image){
+        image.setReview(this);
         this.images.add(image);
     }
 }

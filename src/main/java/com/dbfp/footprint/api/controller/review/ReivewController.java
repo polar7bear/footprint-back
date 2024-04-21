@@ -3,6 +3,7 @@ package com.dbfp.footprint.api.controller.review;
 import com.dbfp.footprint.api.request.review.CreateReviewRequest;
 import com.dbfp.footprint.api.request.review.UpdateReviewRequest;
 import com.dbfp.footprint.api.service.review.ReviewService;
+import com.dbfp.footprint.config.CustomUserDetails;
 import com.dbfp.footprint.dto.review.ReviewDto;
 import com.dbfp.footprint.api.request.review.ReviewLikeRequest;
 import com.dbfp.footprint.dto.review.ReviewListDto;
@@ -17,6 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -52,8 +54,9 @@ public class ReivewController {
             @ApiResponse(responseCode = "401", description = "헤더 없음 or 토큰 불일치", content = @Content(schema = @Schema(example = "INVALID_HEADER or INVALID_TOKEN"))),
             @ApiResponse(responseCode = "500", description = "비공개 리뷰")
     })
-    public ResponseEntity<ReviewDto> findReview(@PathVariable(name = "reviewId") Long reviewId){
-        ReviewDto reviewDto = reviewService.findById(reviewId);
+    public ResponseEntity<ReviewDto> findReview(@PathVariable(name = "reviewId") Long reviewId, @AuthenticationPrincipal CustomUserDetails userDetails){
+        Long memberId = userDetails.getId();
+        ReviewDto reviewDto = reviewService.findById(reviewId, memberId);
         return new ResponseEntity<>(reviewDto, HttpStatus.OK);
     }
 
@@ -64,9 +67,10 @@ public class ReivewController {
             @ApiResponse(responseCode = "400", description = "잘못된 요청 값"),
             @ApiResponse(responseCode = "401", description = "헤더 없음 or 토큰 불일치", content = @Content(schema = @Schema(example = "INVALID_HEADER or INVALID_TOKEN")))
     })
-    public ResponseEntity<Page<ReviewListDto>> findMyReviews(@Parameter(description = "멤버 ID", example = "1") @RequestParam(value = "memberId") Long memberId,
+    public ResponseEntity<Page<ReviewListDto>> findMyReviews(@AuthenticationPrincipal CustomUserDetails userDetails,
                                                              @Parameter(description = "페이지 번호 (0부터 시작)", example = "0") @RequestParam(value = "page", defaultValue = "0") int page,
                                                              @Parameter(description = "페이지 당 항목 수", example = "10") @RequestParam(value = "size", defaultValue = "8") int size){
+        Long memberId = userDetails.getId();
         Page<ReviewListDto> myReviews = reviewService.findAllMyReviewPage(memberId, page, size);
         return new ResponseEntity<>(myReviews, HttpStatus.OK);
     }
@@ -140,9 +144,10 @@ public class ReivewController {
             @ApiResponse(responseCode = "400", description = "잘못된 요청 값"),
             @ApiResponse(responseCode = "401", description = "헤더 없음 or 토큰 불일치", content = @Content(schema = @Schema(example = "INVALID_HEADER or INVALID_TOKEN")))
     })
-    public ResponseEntity<Page<ReviewListDto>> findMyLikedReviews(@Parameter(description = "멤버 ID", example = "1")  @RequestParam(value = "memberId") Long memberId,
+    public ResponseEntity<Page<ReviewListDto>> findMyLikedReviews(@AuthenticationPrincipal CustomUserDetails userDetails,
                                                                   @Parameter(description = "페이지 번호 (0부터 시작)", example = "0")@RequestParam(value = "page", defaultValue = "0") int page,
                                                                   @Parameter(description = "페이지 당 항목 수", example = "10")@RequestParam(value = "size", defaultValue = "8") int size){
+        Long memberId = userDetails.getId();
         Page<ReviewListDto> myReviews = reviewService.findAllMyLikedReviewPage(memberId, page, size);
         return new ResponseEntity<>(myReviews, HttpStatus.OK);
     }
