@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -51,6 +52,9 @@ public class PlanResponse {
     @Schema(description = "북마크 수", example = "5")
     private int bookmarkCount;
 
+    @Schema(description = "계획 생성 시간", example = "2024-04-15T12:00:00")
+    private LocalDateTime createdAt;
+
 //    public PlanResponse(Long id, String title, LocalDate startDate, LocalDate endDate, String region, boolean visible, boolean copyAllowed, List<ScheduleDto> schedules) {
 //        this.id = id;
 //        this.title = title;
@@ -91,6 +95,7 @@ public class PlanResponse {
                 .collect(Collectors.toList()));
         planResponse.setLikeCount(plan.getLikeCount());
         planResponse.setBookmarkCount(plan.getBookmarkCount());
+        planResponse.setCreatedAt(plan.getCreatedAt());
         return planResponse;
     }
 }
