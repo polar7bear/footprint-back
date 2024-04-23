@@ -52,6 +52,7 @@ public class JwtTokenProvider implements InitializingBean {
         return Jwts.builder()
                 .subject(authentication.getName())
                 .claim("memberId", userDetails.getId())
+                .claim("type", "access")
                 .signWith((SecretKey) key, Jwts.SIG.HS512)
                 .expiration(validity)
                 .compact();
@@ -67,6 +68,7 @@ public class JwtTokenProvider implements InitializingBean {
         return Jwts.builder()
                 .subject(authentication.getName())
                 .claim("memberId", userDetails.getId())
+                .claim("type", "refresh")
                 .signWith((SecretKey) key, Jwts.SIG.HS512)
                 .expiration(validity)
                 .compact();
@@ -88,7 +90,12 @@ public class JwtTokenProvider implements InitializingBean {
 
     public boolean validateToken(String token) {
         try {
-            Jwts.parser().verifyWith((SecretKey) key).build().parseSignedClaims(token);
+            Claims payload = Jwts.parser().verifyWith((SecretKey) key).build().parseSignedClaims(token).getPayload();
+
+            String tokenType = payload.get("type", String.class);
+            if ("refresh".equals(tokenType)) {
+                return false;
+            }
             return true;
         } catch (SecurityException | MalformedJwtException e) {
             logger.info("잘못된 토큰 서명입니다.");
