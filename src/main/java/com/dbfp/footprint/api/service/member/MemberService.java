@@ -2,17 +2,16 @@ package com.dbfp.footprint.api.service.member;
 
 import com.dbfp.footprint.api.repository.RefreshTokenRepository;
 import com.dbfp.footprint.api.repository.member.MemberRepository;
-
 import com.dbfp.footprint.api.request.CreateRefreshTokenRequest;
 import com.dbfp.footprint.api.response.CreateMemberResponse;
 import com.dbfp.footprint.api.response.LoginMemberResponse;
 import com.dbfp.footprint.config.jwt.JwtTokenProvider;
 import com.dbfp.footprint.domain.Member;
 import com.dbfp.footprint.domain.RefreshToken;
-import com.dbfp.footprint.exception.member.DuplicatedEmailException;
-import com.dbfp.footprint.exception.member.DuplicatedNicknameException;
-import com.dbfp.footprint.exception.member.WrongPasswordException;
+import com.dbfp.footprint.events.member.MemberDeletedEvent;
+import com.dbfp.footprint.exception.member.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -33,11 +32,14 @@ import java.util.Optional;
 public class MemberService {
 
     private final MemberRepository memberRepository;
+    private final RefreshTokenRepository refreshTokenRepository;
+
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final JwtTokenProvider tokenProvider;
     private final PasswordEncoder passwordEncoder;
-    private final RefreshTokenRepository refreshTokenRepository;
     private final UserDetailsService userDetailsService;
+
+    private final ApplicationEventPublisher eventPublisher;
 
     @Transactional
     public LoginMemberResponse login(String email, String password) {
@@ -59,7 +61,7 @@ public class MemberService {
         String refresh = tokenProvider.createRefreshToken(authentication);
         Long accessTokenExpire = tokenProvider.getAccessTokenExpire(access).getTime();
 
-        RefreshToken refreshEntity = new RefreshToken(refresh, authentication.getName());
+        RefreshToken refreshEntity = new RefreshToken(refresh, authentication.getName(), member);
         refreshTokenRepository.save(refreshEntity);
 
         return new LoginMemberResponse(authentication.getName(), member.getNickname(), access, refresh, accessTokenExpire);
@@ -124,8 +126,51 @@ public class MemberService {
     }
 
     @Transactional(readOnly = true)
-    public Optional<Member> findMember(String email) {
+    public Optional<Member> findMemberByEmail(String email) {
         return memberRepository.findByEmail(email);
     }
 
+    //카카오 로그인 사용자의 회원 탈퇴
+    @Transactional
+    public void deleteMemberByKakaoId(String kakaoId, Long id) {
+        Optional<Member> memberOptional = memberRepository.findById(id);
+        if (memberOptional.isEmpty()) {
+            throw new NotFoundMemberException();
+        }
+
+        Member member = memberOptional.get();
+
+        if (member.getKakaoId().equalsIgnoreCase(kakaoId)) {
+            eventPublisher.publishEvent(new MemberDeletedEvent(this, member));
+            memberRepository.deleteById(id);
+        } else {
+            throw new EmailMismatchException();
+        }
+    }
+
+    //일반 가입 사용자의 회원 탈퇴
+    @Transactional
+    public void deleteMemberByPassword(String password, Long id) {
+        Optional<Member> memberOptional = memberRepository.findById(id);
+        if (memberOptional.isEmpty()) {
+            throw new NotFoundMemberException();
+        }
+
+        Member member = memberOptional.get();
+
+
+        if (passwordEncoder.matches(password, member.getPassword())) {
+            eventPublisher.publishEvent(new MemberDeletedEvent(this, member));
+            memberRepository.deleteById(id);
+        } else {
+            throw new WrongPasswordException();
+        }
+    }
+
+    public Optional<Member> findMemberById(Long memberId) {
+        return memberRepository.findById(memberId);
+    }
 }
+
+
+
