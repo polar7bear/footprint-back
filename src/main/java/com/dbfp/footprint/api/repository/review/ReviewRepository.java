@@ -19,4 +19,6 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
     Page<Review> findAllByVisible(boolean visible, PageRequest pageRequest);
 
     Review findByIdAndVisible(Long Id, boolean visible);
+
+    void deleteByMemberId(Long memberId);
 }
