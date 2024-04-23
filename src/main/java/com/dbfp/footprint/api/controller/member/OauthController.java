@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/kakao")
+@RequestMapping("/api/kakao")
 public class OauthController {
 
     private final OauthService oauthService;
@@ -31,4 +31,5 @@ public class OauthController {
 
         return new ResponseEntity<>(response, httpHeaders, HttpStatus.OK);
     }
+
 }
