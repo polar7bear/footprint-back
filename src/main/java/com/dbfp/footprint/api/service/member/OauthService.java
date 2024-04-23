@@ -73,7 +73,7 @@ public class OauthService {
 
     public LoginMemberResponse registerOrLoginUser(KakaoProfile profile) {
         String email = "KAKAO_" + profile.getId();
-        Optional<Member> foundMember = memberService.findMember(email);
+        Optional<Member> foundMember = memberService.findMemberByEmail(email);
 
         if (foundMember.isEmpty()) {
             String nickname = "회원" + UUID.randomUUID().toString().replace("-", "");
