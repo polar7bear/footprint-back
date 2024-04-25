@@ -21,4 +21,6 @@ public interface ReviewLikeRepository extends JpaRepository<ReviewLike, Long> {
     ReviewLike findByMemberAndReview(Member member, Review review);
 
     boolean existsByMemberAndReview(Member member, Review review);
+
+    void deleteByMemberId(Long memberId);
 }

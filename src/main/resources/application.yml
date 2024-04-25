@@ -15,7 +15,7 @@ spring:
   jpa:
     database: mysql
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: create
     properties:
       hibernate:
         show_sql: true
@@ -53,10 +53,9 @@ cloud:
 cloudfront-domain-name: ${cloudfront-domain-name}
 
 jwt:
-  header: Authorization
-  #dogfootbirdfootprintdogfootbirdfootprintdogfootbirdfootprintdogfootbirdfootprintdogfootbirdfootprint
-  secret: ZG9nZm9vdGJpcmRmb290cHJpbnRkb2dmb290YmlyZGZvb3RwcmludGRvZ2Zvb3RiaXJkZm9vdHByaW50ZG9nZm9vdGJpcmRmb290cHJpbnRkb2dmb290YmlyZGZvb3RwcmludA==
-  token-validity-in-seconds: 86400
+  header: ${jwt.header}
+  secret: ${jwt.secret}
+  token-validity-in-seconds: ${jwt.token-validity-in-seconds}
 
 management:
   endpoints:
@@ -66,6 +65,6 @@ management:
       base-path:  "/api/actuator"
 
 kakao:
-  client_id: {kakao.cliend_id}
-  redirect_uri: {kakao.redirect_uri}
-  password: {kakao.password}
+  client_id: ${kakao.client_id}
+  redirect_uri: ${kakao.redirect_uri}
+  password: ${kakao.password}

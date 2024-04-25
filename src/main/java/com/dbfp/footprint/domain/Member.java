@@ -31,9 +31,9 @@ public class Member {
 
     private String kakaoId;
 
-    @OneToOne
+    /*@OneToOne
     @JoinColumn(name = "image_id", nullable = true)
-    private Image image;
+    private Image image;*/
 
     @OneToMany(mappedBy = "member")
     private List<Plan> plans;

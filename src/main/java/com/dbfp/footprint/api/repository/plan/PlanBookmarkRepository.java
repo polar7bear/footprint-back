@@ -1,5 +1,6 @@
 package com.dbfp.footprint.api.repository.plan;
 
+import com.dbfp.footprint.domain.plan.Plan;
 import com.dbfp.footprint.domain.plan.PlanBookmark;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -17,6 +18,10 @@ public interface PlanBookmarkRepository extends JpaRepository<PlanBookmark, Long
     Optional<PlanBookmark> findByMemberIdAndPlanId(Long memberId, Long planId);
 
     int countByPlanId(Long planid);
+
+    void deleteByMemberId(Long memberId);
+
+    void deleteByPlanIn(List<Plan> plans);
     //void deleteByMemberIdAndPlanId(Long memberId, Long planId);
 
 

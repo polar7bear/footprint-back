@@ -20,8 +20,13 @@ public class RefreshToken {
     @Column(nullable = false)
     private String email;
 
-    public RefreshToken(String refreshToken, String email) {
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id")
+    private Member member;
+
+    public RefreshToken(String refreshToken, String email, Member member) {
         this.refreshToken = refreshToken;
         this.email = email;
+        this.member = member;
     }
 }

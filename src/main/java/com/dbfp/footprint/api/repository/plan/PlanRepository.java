@@ -25,4 +25,5 @@ public interface PlanRepository extends JpaRepository<Plan, Long>, CustomPlanRep
 
     Page<Plan> findByMemberId(Long memberId, Pageable pageable);
 
+    void deleteByMemberId(Long memberId);
 }
