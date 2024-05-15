@@ -22,14 +22,19 @@ public class OauthController {
 
     @GetMapping("/callback")
     public ResponseEntity<LoginMemberResponse> callback(@RequestParam String code) throws JsonProcessingException {
-        OAuthToken token = oauthService.getKakaoOAuthToken(code);
-        KakaoProfile profile = oauthService.getKakaoProfile(token.getAccess_token());
-        LoginMemberResponse response = oauthService.registerOrLoginUser(profile);
+        try {
+            OAuthToken token = oauthService.getKakaoOAuthToken(code);
+            KakaoProfile profile = oauthService.getKakaoProfile(token.getAccess_token());
+            LoginMemberResponse response = oauthService.registerOrLoginUser(profile);
 
-        HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.add(JwtFilter.AUTHORIZATION_HEADER, "Bearer " + response.getAccessToken());
+            HttpHeaders httpHeaders = new HttpHeaders();
+            httpHeaders.add(JwtFilter.AUTHORIZATION_HEADER, "Bearer " + response.getAccessToken());
 
-        return new ResponseEntity<>(response, httpHeaders, HttpStatus.OK);
+            return new ResponseEntity<>(response, httpHeaders, HttpStatus.OK);
+        } catch (Exception e) {
+            // 인가 코드 재사용 시 401 Unauthorized 반환
+            return new ResponseEntity<>(null, new HttpHeaders(), HttpStatus.UNAUTHORIZED);
+        }
     }
 
 }

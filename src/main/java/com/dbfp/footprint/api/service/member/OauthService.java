@@ -8,10 +8,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -53,6 +50,9 @@ public class OauthService {
                 request,
                 String.class
         );
+        if (response.getStatusCode() != HttpStatus.OK) {
+            throw new IllegalStateException("유효하지않는 인증 코드입니다.");
+        }
         return objectMapper.readValue(response.getBody(), OAuthToken.class);
     }
 
@@ -68,6 +68,9 @@ public class OauthService {
                 profileRequest,
                 String.class
         );
+        if (response.getStatusCode() != HttpStatus.OK) {
+            throw new IllegalStateException("프로필을 불러오는데 실패하였습니다.");
+        }
         return objectMapper.readValue(response.getBody(), KakaoProfile.class);
     }
 
