@@ -64,7 +64,7 @@ public class MemberService {
         RefreshToken refreshEntity = new RefreshToken(refresh, authentication.getName(), member);
         refreshTokenRepository.save(refreshEntity);
 
-        return new LoginMemberResponse(authentication.getName(), member.getNickname(), access, refresh, accessTokenExpire);
+        return new LoginMemberResponse(authentication.getName(), member.getKakaoId(), member.getNickname(), access, refresh, accessTokenExpire);
     }
 
     @Transactional
@@ -110,7 +110,7 @@ public class MemberService {
                 String newAccessToken = tokenProvider.createAccessToken(authentication);
                 Long accessTokenExpire = tokenProvider.getAccessTokenExpire(newAccessToken).getTime();
 
-                return new LoginMemberResponse(userDetails.getUsername(), member.getNickname(), newAccessToken, request.getRefreshToken(), accessTokenExpire);
+                return new LoginMemberResponse(userDetails.getUsername(), member.getKakaoId(), member.getNickname(), newAccessToken, request.getRefreshToken(), accessTokenExpire);
             } else {
                 throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "유효하지 않은 리프레쉬 토큰입니다.");
             }

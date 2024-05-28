@@ -8,6 +8,7 @@ import lombok.Getter;
 public class LoginMemberResponse {
 
     private String email;
+    private String KakaoId;
     private String nickname;
     private String accessToken;
     private String refreshToken;
