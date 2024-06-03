@@ -35,5 +35,36 @@
 ## 서비스 아키텍처
 ![image](https://github.com/dogfoot-birdfoot/footprint-back/assets/124570553/1557c79e-401c-48cc-beaf-2bc432a29b55)
 
+## 시연 영상
+
+### 메인 페이지
+![메인페이지](https://github.com/dogfoot-birdfoot/footprint-front/assets/86706630/0da2f21a-8bcf-4970-ba1e-dc0c2dd05a5a)
+
+### 어행 일정 작성
+![일정 생성 페이지](https://github.com/dogfoot-birdfoot/footprint-front/assets/86706630/2234c7d5-2b79-4207-9b67-e4dd6582249b)
+
+### 리뷰 작성
+![리뷰 작성페이지](https://github.com/dogfoot-birdfoot/footprint-front/assets/86706630/d25f862d-6e73-47bf-b393-ee0103439582)
+
+### 일정 공유 페이지
+![일정 공유 페이지](https://github.com/dogfoot-birdfoot/footprint-front/assets/86706630/c6a521d0-63fb-4074-886b-8f48ff081761)
+
+
+### 리뷰 공유 페이지
+![리뷰 공유 페이지](https://github.com/dogfoot-birdfoot/footprint-front/assets/86706630/e2e6a1e5-c7ae-4d5c-bb44-838eaeb447fe)
+
+### 검색 페이지
+![검색 페이지](https://github.com/dogfoot-birdfoot/footprint-front/assets/86706630/c985b1a9-253f-4534-aa0d-1ffd65bba810)
+
+### 마이 페이지
+![마이페이지](https://github.com/dogfoot-birdfoot/footprint-front/assets/86706630/3f406f30-9000-4b38-a604-c7a9e15c72fe)
+
+
+### 회원가입 및 로그인
+![회원가입 및 로그인](https://github.com/dogfoot-birdfoot/footprint-front/assets/86706630/7ef2f6b4-7667-4c9a-947d-dad943393bf6)
+
+<br/>
+
+![녹화_2024_04_23_02_49_32_196](https://github.com/dogfoot-birdfoot/footprint-front/assets/86706630/72d819b9-cdde-4648-ba7b-c9c4dece4ce9)
 
 
