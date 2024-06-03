@@ -24,9 +24,8 @@
 
 - **Language** : Java 21
 - **Build** : Gradle
-- **Framework** : Spring Boot
+- **Framework** : Spring Boot 3.2.3
 - **Library** : Spring Data JPA, Querydsl, Spring Security
-- **Server** : Nginx
 - **Database** : MySQL
 - **DevOps** : Krampoline, Grafana, Prometheus
 - **버전 및 이슈관리** : Guthub, Jira
