@@ -32,6 +32,55 @@
 - **협업 툴** : Confluence, Discord
 - **API 도구** : Swagger
 
+<br>
+
+## ERD 설계
+![image](https://github.com/polar7bear/footprint-back/assets/124570553/b3eb2f4d-db83-4c15-9d0f-6ca91cbc1c3c)
+
+<br>
+
+## API 명세
+
+| 기능             | 유형   | 메소드 | URI              | 요청 데이터                                | 응답 코드     | 예시 응답 |
+|------------------|--------|--------|------------------|-------------------------------------------|---------------|-----------|
+| 회원 가입        | 회원   | POST   | /api/signup      | `{ "email": String, "password": String, "nickname": String }` | 201 Created  | `{ "email" : "abcdefg@naver.com", "nickname" : "nickname", "password" : "암호화된 문자열"}` |
+| 로그인           | 회원   | POST   | /api/login       | `{ "email": String, "password": String }` | 200 OK        | `{ "email" : "abcdefg@naver.com", "accessToken" : "accessToken123123", "refreshToken" : "refreshToken123123", "expire" : 86400 }` |
+| 로그아웃         | 회원   | POST   | /api/logout      | `{ "refreshToken" : "refreshToken123123" }`| 200 OK        |           |
+| 토큰 재발급     | 회원   | POST   | /api/refresh     | `{ "refreshToken" : "refreshToken123123" }`| 200 OK        | `{ "accessToken" : "accessToken123123" }` |
+| 회원 탈퇴        | 회원   | DELETE | /api/delete      | `{ "password" : String }`                  | 200 OK        | `{ "userId" : 1, "password" : "암호화된 문자열" }` |
+| 프로필 작성      | 회원   | POST   | /api/profile     | `{ "memberId": Long, "nickname": String, "kakaoId": String, "image": String }` | 201 Created  |           |
+| 프로필 수정      | 회원   | PUT    | /api/profile     | `{ "nickname": String, "kakaoId": String, "image": String }` | 200 OK        | `{ "message": String }` |
+| 프로필 조회      | 회원   | GET    | /api/profile/{userId} |                                         | 200 OK        | `{ "memberId": "long", "email": "string", "nickname": "string", "kakaoId": "string", "image": "string"}` |
+| 일정 추가        | 회원   | POST   | /api/plans       | `{ "memberId": Long, "planTitle": String, "startDate": DateTime, "endDate": DateTime, "region": String, "visible": Boolean, "copyAllowed": Boolean }` | 201 Created  | `{ "planId": Long, "message": String }` |
+| 일정 상세 조회   | 회원   | GET    | /api/plans{planId} |                                          | 200 OK        | `{ "planId": Long, "memberId": Long, "planTitle": String, "startDate": DateTime, "endDate": DateTime, "region": String, "schedules": List<Schedule>, "visible": Boolean, "copyAllowed": Boolean }` |
+| 공개된 일정 조회 | 사용자 | GET    | /api/plans       | `{ "page": 0, "size": 1, "sort": ["string"] }` | 200 OK        | `{ "totalElements": 0, "totalPages": 0, "first": true, "last": true, "size": 0, "content": [], "number": 0, "sort": { "empty": true, "sorted": true, "unsorted": true }, "numberOfElements": 0, "pageable": { "offset": 0, "sort": { "empty": true, "sorted": true, "unsorted": true }, "pageNumber": 0, "pageSize": 0, "paged": true, "unpaged": true }, "empty": true }` |
+| 자신의 일정 조회 | 회원   | GET    | /api/my/plans    |                                           | 200 OK        | `[ { "planId": Long, "memberId": Long, "planTitle": String, "startDate": DateTime, "endDate": DateTime, "region": String, "visible": Boolean, "copyAllowed": Boolean }, ... ]` |
+| 일정 수정        | 작성자 | PUT    | /api/plans       | `{ "planId": Long, "planTitle": String, "startDate": DateTime, "endDate": DateTime, "region": String, "visible": Boolean, "copyAllowed": Boolean }` | 200 OK        | `{ "message": String }` |
+| 일정 삭제        | 작성자 | DELETE | /api/plans/{planId} |                                         | 200 OK        | `{ "message": String }` |
+| 상세일정 작성    | 작성자 | POST   | /api/schedules{planId} | `{ "day": Int, "scheduleContent": String, "scheduleCost": Int , "schedulePlace": String }` | 201 Created  | `{ "scheduleId": Long, "message": String }` |
+| 상세일정 조회    | 작성자 | GET    | /api/schedules/{scheduleId} |                                      | 200 OK        | `{ "scheduleId": Long, "planId": Long, "day": Int, "scheduleContent": String, "scheduleCost": Int, "schedulePlace": String }` |
+| 상세일정 수정    | 작성자 | PUT    | /api/schedules   | `{ "scheduleId": Long, "day": Int, "scheduleContent": String, "scheduleCost": Int, "schedulePlace": String }` | 200 OK        | `{ "message": String }` |
+| 상세일정 삭제    | 작성자 | DELETE | /api/schedules/{scheduleId} |                                      | 200 OK        | `{ "message": String }` |
+| 장소 추가        | 작성자 | POST   | /api/places/{scheduleId} | `{ "kakaoPlaceId": String, "placeName": String, "latitude": Double, "longitude": Double, "address": String, "visitTime": Time }` | 201 Created  | `{ "placeId": Long, "message": String }` |
+| 장소 세부 정보 추가 | 작성자 | POST   | /api/places/{placesId} | `{ "memo": String, "cost": Int }`       | 201 Created  | `{ "placeDetailId": Long, "message": String }` |
+| 일정 즐겨찾기    | 회원   | POST   | /api/bookmark/{planId} |                                         | 201 Created  | `{ "bookmarkId": Long, "planId": Long, "memberId": Long }` |
+| 즐겨찾기 삭제    | 회원   | DELETE | /api/bookmark/{planId} |                                         | 200 OK        | `{ "message": String }` |
+| 즐겨찾기한 목록 조회 | 회원   | GET    | /api/my/bookmarks |                                         | 200 OK        | `[ { "bookmarkId": Long, "planId": Long, "memberId": Long, "planTitle": String, "startDate": DateTime, "endDate": DateTime, "region": String }, ... ]` |
+| 일정 복사        | 회원   | POST   | /api/copy/{planId} |                                         | 201 Created  | `{ "copyId": Long, "originalPlanId": Long, "copiedPlanId": Long, "message": String }` |
+| 일정 좋아요      | 회원   | POST   | /api/plans/like/{planId} |                                         | 201 Created  |           |
+| 좋아요한 목록 조회 | 회원   | GET    | /api/plans/likes |                                         | 200 OK        | `[ { "likeId": "Long", "planId": "Long", "memberId": "Long", "planTitle": "String", "startDate": "DateTime", "endDate": "DateTime", "region": "String" }, ... ]` |
+| 리뷰 작성        | 회원   | POST   | /api/reviews     | `{ "memberId": 0, "title": "string", "content": "string", "imageIds": [ 0 ] }` | 201 Created  | `1 // 리뷰 id` |
+| 리뷰 상세 조회   | 작성자 | GET    | /api/reviews/{reviewId} |                                         | 200 OK        | `{ "memberId": 0, "title": "string", "content": "string", "images": [ 0 ] }` |
+| 자신의 리뷰 조회 | 작성자 | GET    | api/my/reviews   | `memberId : 회원id page: 받아올 번호의 page size: 한 페이지에 들어갈 글 개수, 사이즈` | 200 OK        | `{ "totalElements": 0, "totalPages": 0, "size": 0, "content": [ { "memberId": 0, "reviewId": 0, "title": "string", "previewImageUrl": "string" } ], "number": 0, "sort": { "empty": true, "sorted": true, "unsorted": true }, "first": true, "last": true, "numberOfElements": 0, "pageable": { "offset": 0, "sort": { "empty": true, "sorted": true, "unsorted": true }, "pageNumber": 0, "pageSize": 0, "paged": true, "unpaged": true }, "empty": true }` |
+| 리뷰 수정        | 작성자 | PUT    | /api/reviews     | `{ "reviewId": 0, "memberId": 0, "title": "string", "content": "string", "imageIds": [ 0 ] }` | 200 OK        | `{ "SUCCESS" }` |
+| 리뷰 삭제        | 작성자 | DELETE | /api/reviews/{reviewId} |                                         | 200 OK        | `{ "SUCCESS" }` |
+| 리뷰 좋아요      | 회원   | POST   | /api/reviews/like/{reviewId} |                                         | 201 Created  | `{ "likeId": Long, "message": String }` |
+| 좋아요한 목록 조회 | 회원   | GET    | /api/reviews/likes |                                         | 200 OK        | `[ { "likeId": Long, "reviewId": Long, "memberId": Long, "reviewTitle": String, "reviewContent": String }, ... ]` |
+| 검색             | 회원   | POST   | /api/search      | `{ "word" : String, "type" : String }`    | 200 OK        |           |
+| 리뷰 정렬        | 회원   | GET    | /api/reviews     | `{ "sort": String }`                      | 200 OK        |           |
+
+<br>
+
 ## 서비스 아키텍처
 ![image](https://github.com/dogfoot-birdfoot/footprint-back/assets/124570553/1557c79e-401c-48cc-beaf-2bc432a29b55)
 
