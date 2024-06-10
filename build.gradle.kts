@@ -64,10 +64,10 @@ dependencies {
     implementation("io.micrometer:micrometer-registry-prometheus")
 
 
-//    implementation("org.springframework.boot:spring-boot-starter-validation")
-//    implementation("org.hibernate.hibernate-validator:4.3.0.Final")
-//    testImplementation("org.springframework.boot:spring-boot-starter-test")
-//    testImplementation("org.springframework.security:spring-security-test")
+    implementation("org.springframework.boot:spring-boot-starter-validation")
+    //implementation("org.hibernate.hibernate-validator:4.3.0.Final")
+    testImplementation("org.springframework.boot:spring-boot-starter-test")
+    testImplementation("org.springframework.security:spring-security-test")
 }
 
 tasks.withType<Test> {
