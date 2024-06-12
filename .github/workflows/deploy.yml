@@ -6,9 +6,10 @@ on:
       - main
 
 env:
-  S3_BUCKET_NAME: ${{ secrets.AWS_S3_BUCKET }}
-  CODE_DEPLOY_APPLICATION_NAME: ${{ secrets.CODE_DEPLOY_APPLICATION_NAME }}
-  CODE_DEPLOY_DEPLOYMENT_GROUP_NAME: ${{ secrets.CODE_DEPLOY_DEPLOYMENT_GROUP_NAME }}
+  S3_BUCKET_NAME: s3-footprint
+  RESOURCE_PATH: ./src/main/resources/application.yml
+  CODE_DEPLOY_APPLICATION_NAME: footprint
+  CODE_DEPLOY_DEPLOYMENT_GROUP_NAME: code-deploy-group
 
 jobs:
   build:
@@ -23,6 +24,28 @@ jobs:
         with:
           java-version: 21
 
+      - name: Set yml file
+        uses: microsoft/variable-substitution@v1
+        with:
+          files: ${{ env.RESOURCE_PATH }}
+        env:
+          server.port: ${{ server.port }}
+          spring.datasource.url: ${{ secrets.DB_URL }}
+          spring.datasource.username: ${{ secrets.DB_USERNAME }}
+          spring.datasource.password: ${{ secrets.DB_PASSWORD }}
+          spring.datasource.driver-class-name: ${{ secrets.DB_DRIVER_CLASS_NAME }}
+          cloud.aws.credentials.access-key: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          cloud.aws.credentials.secret-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          cloud.aws.s3.bucket: ${{ secrets.AWS_S3_BUCKET }}
+          cloud.aws.region.static: ${{ secrets.AWS_REGION }}
+          cloudfront-domain-name: ${{ secrets.CLOUDFRONT_DOMAIN_NAME }}
+          jwt.header: ${{ secrets.JWT_HEADER }}
+          jwt.secret: ${{ secrets.JWT_SECRET }}
+          jwt.token-validity-in-seconds: ${{ secrets.JWT_TOKEN_VALIDITY_IN_SECONDS }}
+          kakao.client_id: ${{ secrets.KAKAO_CLIENT_ID }}
+          kakao.redirect_uri: ${{ secrets.KAKAO_REDIRECT_URI }}
+          kakao.password: ${{ secrets.KAKAO_PASSWORD }}
+
       - name: Grant execute permission for gradlew
         run: chmod +x ./gradlew
         shell: bash
@@ -32,7 +55,7 @@ jobs:
         shell: bash
 
       - name: Make zip file
-        run: zip -r $GITHUB_SHA.zip .
+        run: zip -r ./$GITHUB_SHA .
         shell: bash
 
       - name: Configure AWS credentials
@@ -43,30 +66,12 @@ jobs:
           aws-region: ${{ secrets.AWS_REGION }}
 
       - name: Upload to S3
-        run: aws s3 cp --region ${{ secrets.AWS_REGION }} $GITHUB_SHA.zip s3://$S3_BUCKET_NAME/$GITHUB_SHA.zip
-        shell: bash
+        run: aws s3 cp --region ap-northeast-2 ./$GITHUB_SHA.zip s3://$S3_BUCKET_NAME/$GITHUB_SHA.zip
 
       - name: Code Deploy
         run: |
           aws deploy create-deployment \
           --deployment-config-name CodeDeployDefault.AllAtOnce \
-          --application-name $CODE_DEPLOY_APPLICATION_NAME \
-          --deployment-group-name $CODE_DEPLOY_DEPLOYMENT_GROUP_NAME \
-          --s3-location bucket=$S3_BUCKET_NAME,bundleType=zip,key=$GITHUB_SHA.zip
-        shell: bash
-
-      - name: Set environment variables for application
-        run: |
-          echo "DB_URL=${{ secrets.DB_URL }}" >> $GITHUB_ENV
-          echo "DB_USERNAME=${{ secrets.DB_USERNAME }}" >> $GITHUB_ENV
-          echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> $GITHUB_ENV
-          echo "DB_DRIVER_CLASS_NAME=${{ secrets.DB_DRIVER_CLASS_NAME }}" >> $GITHUB_ENV
-          echo "CLOUDFRONT_DOMAIN_NAME=${{ secrets.CLOUDFRONT_DOMAIN_NAME }}" >> $GITHUB_ENV
-          echo "JWT_HEADER=${{ secrets.JWT_HEADER }}" >> $GITHUB_ENV
-          echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> $GITHUB_ENV
-          echo "JWT_TOKEN_VALIDITY_IN_SECONDS=${{ secrets.JWT_TOKEN_VALIDITY_IN_SECONDS }}" >> $GITHUB_ENV
-          echo "KAKAO_CLIENT_ID=${{ secrets.KAKAO_CLIENT_ID }}" >> $GITHUB_ENV
-          echo "KAKAO_REDIRECT_URI=${{ secrets.KAKAO_REDIRECT_URI }}" >> $GITHUB_ENV
-          echo "KAKAO_PASSWORD=${{ secrets.KAKAO_PASSWORD }}" >> $GITHUB_ENV
-          echo "SERVER_PORT=${{ secrets.SERVER_PORT }}" >> $GITHUB_ENV
-        shell: bash
+          --application-name ${{ env.CODE_DEPLOY_APPLICATION_NAME }} \
+          --deployment-group-name ${{ env.CODE_DEPLOY_DEPLOYMENT_GROUP_NAME }} \
+          --s3-location bucket=$S3_BUCKET_NAME.bundleType=zip,key=$GITHUB_SHA.zip
