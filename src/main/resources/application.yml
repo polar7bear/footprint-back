@@ -3,8 +3,7 @@ server:
   forward-headers-strategy: framework
 
 spring:
-  profiles:
-    active: prod
+
 
   datasource:
     url: ${spring.datasource.url}
