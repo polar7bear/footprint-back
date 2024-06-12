@@ -29,7 +29,7 @@ jobs:
         with:
           files: ${{ env.RESOURCE_PATH }}
         env:
-          server.port: ${{ server.port }}
+          server.port: ${{ secrets.SERVER_PORT }}
           spring.datasource.url: ${{ secrets.DB_URL }}
           spring.datasource.username: ${{ secrets.DB_USERNAME }}
           spring.datasource.password: ${{ secrets.DB_PASSWORD }}
