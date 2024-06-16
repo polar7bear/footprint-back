@@ -11,9 +11,10 @@ public class WebConfig implements WebMvcConfigurer {
 
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-                .allowedOriginPatterns("*")
+                .allowedOrigins("dlb9mfb1kq1mn.cloudfront.net")
                 .allowedMethods("*")
                 .allowedHeaders("*");
+
     }
 
     @Bean
