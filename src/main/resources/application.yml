@@ -1,10 +1,7 @@
 server:
-  port: ${server.port}
   forward-headers-strategy: framework
 
 spring:
-
-
   datasource:
     url: ${spring.datasource.url}
     username: ${spring.datasource.username}
