@@ -13,7 +13,7 @@
 ### 백엔드
 - 강원빈 (팀장) - 크램폴린 세팅 및 서버 배포, prometheus 및 grafana 세팅, 백엔드 초기 설정
 - 강화석 - 일정조회 및 정렬, 일정 검색 및 정렬, 일정 즐겨찾기 및 좋아요 기능, 사용자 일정 관리
-- 손승기 - DB 설계, 일정 CRUD, 여행 일정 복사 기능, 스프링 시큐리티 설정, 회원가입 및 회원탈퇴, Jwt 기반 로그인 및 로그아웃, Kakao OAuth 로그인
+- 손승기 - DB 설계, 일정 CRUD, 여행 일정 복사 기능, 스프링 시큐리티 설정, 회원가입 및 회원탈퇴, Jwt 기반 로그인 및 로그아웃, Kakao OAuth 로그인, AWS와 Github Action을 활용하여 CI/CD 파이프라인 구축 및 배포
 - 신서연 - 리뷰 CRUD, 이미지 기능 구현, AWS S3 관리 및 연결
 
 ### 프론트엔드
@@ -27,7 +27,7 @@
 - **Framework** : Spring Boot 3.2.3
 - **Library** : Spring Data JPA, Querydsl, Spring Security
 - **Database** : MySQL
-- **DevOps** : Krampoline, Grafana, Prometheus
+- **DevOps** : Krampoline, Grafana, Prometheus, AWS EC2, S3, Cloudfront
 - **버전 및 이슈관리** : Guthub, Jira
 - **협업 툴** : Confluence, Discord
 - **API 도구** : Swagger
