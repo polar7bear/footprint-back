@@ -39,7 +39,14 @@
 
 <br>
 
-## API 명세
+## 서비스 아키텍처
+![image](https://github.com/dogfoot-birdfoot/footprint-back/assets/124570553/1557c79e-401c-48cc-beaf-2bc432a29b55)
+
+<br>
+
+<details>
+  <summary><h2>API 명세</h2></summary>
+  <div markdown="1">
 
 | 기능             | 유형   | 메소드 | URI              | 요청 데이터                                | 응답 코드     | 예시 응답 |
 |------------------|--------|--------|------------------|-------------------------------------------|---------------|-----------|
@@ -78,13 +85,14 @@
 | 좋아요한 목록 조회 | 회원   | GET    | /api/reviews/likes |                                         | 200 OK        | `[ { "likeId": Long, "reviewId": Long, "memberId": Long, "reviewTitle": String, "reviewContent": String }, ... ]` |
 | 검색             | 회원   | POST   | /api/search      | `{ "word" : String, "type" : String }`    | 200 OK        |           |
 | 리뷰 정렬        | 회원   | GET    | /api/reviews     | `{ "sort": String }`                      | 200 OK        |           |
-
+  </div>
+</details>
 <br>
 
-## 서비스 아키텍처
-![image](https://github.com/dogfoot-birdfoot/footprint-back/assets/124570553/1557c79e-401c-48cc-beaf-2bc432a29b55)
 
-## 시연 영상
+<details>
+  <summary><h2>시연 영상</h2></summary>
+  <div markdown="1">
 
 ### 메인 페이지
 ![메인페이지](https://github.com/dogfoot-birdfoot/footprint-front/assets/86706630/0da2f21a-8bcf-4970-ba1e-dc0c2dd05a5a)
@@ -116,4 +124,6 @@
 
 ![녹화_2024_04_23_02_49_32_196](https://github.com/dogfoot-birdfoot/footprint-front/assets/86706630/72d819b9-cdde-4648-ba7b-c9c4dece4ce9)
 
+  </div>
+</details>
 
